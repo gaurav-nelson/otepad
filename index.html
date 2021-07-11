@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="script-src 'self' 'unsafe-inline';"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8" />
+    <title>otepad</title>
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <link rel="stylesheet" type="text/css" href="css/uikit.min.css" />
+    <script src="js/uikit.min.js"></script>
+    <script src="js/uikit-icons.min.js"></script>
+  </head>
+  <body class="dark-theme">
+    <div id="container" uk-container uk-height-viewport drag>
+      <div id="editable" class="no-drag editor uk-padding" contenteditable="true"></div>
+    </div>
+    <span
+      id="toggleTheme"
+      class="uk-icon-button uk-position-top-right uk-margin-top uk-margin-right"
+      uk-icon="bolt"
+      uk-tooltip="title: Toggle theme; pos: left"
+      onclick="themeSwitch()"
+    ></span>
+    <script src="js/main.js"></script>
+  </body>
+</html>

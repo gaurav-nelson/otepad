@@ -1,0 +1,49 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-size: 14px;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont;
+}
+body {
+  color: #161618;
+  background-color: #f2f2f2;
+}
+
+/* Dark Mode style */
+body.dark-theme {
+  color: #eeeeee;
+  background: #212124;
+}
+
+.editor {
+  font-family: Lucida Console, Lucida Sans Typewriter, monaco,
+    Bitstream Vera Sans Mono, monospace;
+}
+
+[contenteditable]:focus {
+  outline: 0px solid transparent;
+}
+
+#toggleTheme {
+  opacity: 0.5;
+}
+
+#toggleTheme:hover {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+.drag {
+  -webkit-app-region: drag;
+}
+
+.no-drag {
+  -webkit-app-region: no-drag;
+}
+
+*, a, button {
+  cursor: default;
+  user-select: none;
+}
