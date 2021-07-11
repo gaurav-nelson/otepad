@@ -9,6 +9,11 @@
     <meta charset="UTF-8" />
     <title>otepad</title>
     <link rel="manifest" href="manifest.webmanifest">
+    <script type="module">
+      import 'https://cdn.jsdelivr.net/npm/@pwabuilder/pwaupdate';
+      const el = document.createElement('pwa-update');
+      document.body.appendChild(el);
+    </script>
     <link rel="stylesheet" type="text/css" href="css/main.css" />
     <link rel="stylesheet" type="text/css" href="css/uikit.min.css" />
     <script src="js/uikit.min.js"></script>
