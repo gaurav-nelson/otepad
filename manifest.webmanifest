@@ -12,6 +12,7 @@
     "orientation": "any",
     "related_applications": [],
     "prefer_related_applications": false,
+    "categories": ["productivity", "utilities"],
     "icons": [
       {
         "src": "img/icon-72x72.png",
