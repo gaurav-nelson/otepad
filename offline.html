@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="script-src 'self' 'unsafe-inline';"
+    />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="description" content="Not a text editor." />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"
+    />
+    <meta charset="UTF-8" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="otepad" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="otepad" />
+    <link rel="icon" sizes="192x192" href="img/icon-192x192.png" />
+    <link rel="apple-touch-icon" href="img/icon-192x192.png" />
+    <meta name="msapplication-TileImage" content="img/icon-144x144.png" />
+    <meta name="msapplication-TileColor" content="#212124" />
+    <meta name="theme-color" content="#212124" />
+    <meta name="twitter:creator" content="@GauravNelson" />
+    <title>otepad</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <link rel="stylesheet" type="text/css" href="css/uikit.min.css" />
+    <script src="js/uikit.min.js"></script>
+    <script src="js/uikit-icons.min.js"></script>
+  </head>
+  <body>
+    <div id="container" class="container" uk-container uk-height-viewport drag>
+      <div
+        id="editable"
+        class="no-drag editor uk-padding"
+        contenteditable="true"
+      ></div>
+    </div>
+    <span
+      id="toggleTheme"
+      class="uk-icon-button uk-position-top-right uk-margin-top uk-margin-right"
+      uk-icon="bolt"
+      uk-tooltip="title: Toggle theme; pos: left"
+      onclick="themeSwitch()"
+    ></span>
+    <script src="js/main.js"></script>
+  </body>
+  <script>
+    window.addEventListener("load", () => {
+      registerSW();
+    });
+
+    // Register the Service Worker
+    async function registerSW() {
+      if ("serviceWorker" in navigator) {
+        try {
+          await navigator.serviceWorker.register("js/sw.js");
+        } catch (e) {
+          console.log("SW registration failed");
+        }
+      }
+    }
+  </script>
+</html>
