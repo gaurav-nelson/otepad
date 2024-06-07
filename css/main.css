@@ -28,6 +28,8 @@ body {
 
 .container {
   background: var(--background-color);
+  display: flex;
+  justify-content: center;
 }
 
 input,
@@ -38,6 +40,7 @@ select {
 .editor {
   font-family: Lucida Console, Lucida Sans Typewriter, monaco,
     Bitstream Vera Sans Mono, monospace;
+  width: 100vh;
 }
 
 [contenteditable]:focus {

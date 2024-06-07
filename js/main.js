@@ -3,6 +3,15 @@ var editDiv = document.getElementById("editable");
 window.onload = function () {
   editDiv.contentEditable = true;
   setEndOfContenteditable(editDiv);
+  // Add event listener for paste event
+  editDiv.addEventListener('paste', function(e) {
+    if (e.shiftKey) {
+      // If Shift key is pressed, strip formatting
+      e.preventDefault();
+      var text = e.clipboardData.getData('text/plain');
+      editDiv.insertAdjacentText('beforeend', text);
+    }
+  });
 };
 
 function setEndOfContenteditable(contentEditableElement) {

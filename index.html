@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
     <meta
       http-equiv="Content-Security-Policy"
       content="script-src 'self' 'unsafe-inline';"
@@ -8,10 +9,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="description" content="Not a text editor." />
     <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=5"
     />
-    <meta charset="UTF-8" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="application-name" content="otepad" />
@@ -27,15 +27,16 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="stylesheet" type="text/css" href="css/main.css" />
     <link rel="stylesheet" type="text/css" href="css/uikit.min.css" />
-    <script src="js/uikit.min.js"></script>
-    <script src="js/uikit-icons.min.js"></script>
   </head>
   <body>
-    <div id="container" class="container" uk-container uk-height-viewport drag>
+    <div id="container" class="container" uk-container uk-height-viewport drag role="main">
       <div
         id="editable"
         class="no-drag editor uk-padding"
         contenteditable="true"
+        role="textbox"
+        aria-multiline="true"
+        aria-label="Editor"
       ></div>
     </div>
     <span
@@ -44,9 +45,13 @@
       uk-icon="bolt"
       uk-tooltip="title: Toggle theme; pos: left"
       onclick="themeSwitch()"
+      role="button"
+      aria-label="Toggle theme"
     ></span>
-    <script src="js/main.js"></script>
   </body>
+  <script src="js/uikit.min.js"></script>
+  <script src="js/uikit-icons.min.js"></script>
+  <script src="js/main.js"></script>
   <script>
     window.addEventListener("load", () => {
       registerSW();
