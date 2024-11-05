@@ -25,6 +25,9 @@ document.addEventListener("DOMContentLoaded", function () {
   editDiv.addEventListener("blur", saveContent);
   editDiv.addEventListener("input", debounce(saveContent, 300));
 
+  const deleteButton = document.getElementById("deleteContent");
+  deleteButton.addEventListener("click", deleteContent);
+
   function loadContent() {
     editDiv.innerHTML = localStorage.getItem("content");
     setEndOfContenteditable(editDiv); // Set cursor at the end after loading content
@@ -48,6 +51,12 @@ document.addEventListener("DOMContentLoaded", function () {
       clearTimeout(timeout);
       timeout = setTimeout(() => func.apply(this, args), wait);
     };
+  }
+
+  function deleteContent() {
+    editDiv.innerHTML = "";
+    localStorage.removeItem("content");
+    editDiv.focus();
   }
 });
 

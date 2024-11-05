@@ -56,6 +56,16 @@ select {
   transform: scale(1.2);
 }
 
+#deleteContent {
+  opacity: 0.5;
+  position: absolute;
+}
+
+#deleteContent:hover {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
 .drag {
   -webkit-app-region: drag;
 }
