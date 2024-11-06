@@ -50,6 +50,7 @@ select {
 
 #toggleTheme {
   opacity: 0.5;
+  cursor: pointer;
 }
 
 #toggleTheme:hover {
@@ -60,6 +61,7 @@ select {
 #deleteContent {
   opacity: 0.5;
   position: absolute;
+  cursor: pointer;
 }
 
 #deleteContent:hover {
@@ -78,6 +80,5 @@ select {
 *,
 a,
 button {
-  cursor: default;
   user-select: none;
 }

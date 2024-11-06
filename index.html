@@ -39,24 +39,23 @@
         aria-label="Editor"
       ></div>
     </div>
-    <span
+    <button
       id="toggleTheme"
       class="uk-icon-button uk-position-top-right uk-margin-top uk-margin-right"
       uk-icon="bolt"
       uk-tooltip="title: Toggle theme; pos: left"
       onclick="themeSwitch()"
-      role="button"
       aria-label="Toggle theme"
-    ></span>
-    <span
+    ></button>
+    <button
       id="deleteContent"
       class="uk-icon-button uk-position-top-right uk-margin-top uk-margin-right"
       style="top: 50px;"
       uk-icon="trash"
       uk-tooltip="title: Delete content; pos: left"
-      role="button"
+      onclick="deleteContent()"
       aria-label="Delete content"
-    ></span>
+    ></button>
   </body>
   <script src="js/uikit.min.js"></script>
   <script src="js/uikit-icons.min.js"></script>
