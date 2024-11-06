@@ -6,6 +6,7 @@ importScripts(
 
 const CACHE = "pwabuilder-page";
 const offlineFallbackPage = "offline.html";
+const PRECACHE_ASSETS = ["/img/", "/css/", "/js/"];
 
 self.addEventListener("message", (event) => {
   if (event.data && event.data.type === "SKIP_WAITING") {
@@ -13,10 +14,17 @@ self.addEventListener("message", (event) => {
   }
 });
 
-self.addEventListener("install", async (event) => {
+self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE).then((cache) => cache.add(offlineFallbackPage))
+    (async () => {
+      const cache = await caches.open(CACHE);
+      cache.addAll(PRECACHE_ASSETS);
+    })()
   );
+});
+
+self.addEventListener('activate', event => {
+  event.waitUntil(self.clients.claim());
 });
 
 if (workbox.navigationPreload.isSupported()) {
@@ -46,4 +54,6 @@ self.addEventListener("fetch", (event) => {
   }
 });
 
-workbox.precaching.precacheAndRoute([{ url: offlineFallbackPage, revision: null }]);
+workbox.precaching.precacheAndRoute([
+  { url: offlineFallbackPage, revision: null },
+]);

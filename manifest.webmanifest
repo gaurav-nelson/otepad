@@ -10,10 +10,7 @@
   "theme_color": "#323332",
   "orientation": "any",
   "prefer_related_applications": false,
-  "categories": [
-    "productivity",
-    "utilities"
-  ],
+  "categories": ["productivity", "utilities"],
   "icons": [
     {
       "src": "img/icon-72x72.png",
@@ -82,5 +79,13 @@
       "type": "image/png"
     }
   ],
-  "description": "A minimal free temporary note-taking app for you - not your regular text editor.\n\nWorks offline and saves all notes locally on your phone. Keep them till you want and delete them when you don't.\n\nEasily switch to a dark or light theme."
+  "description": "A minimal free temporary note-taking app for you - not your regular text editor.\n\nWorks offline and saves all notes locally on your phone. Keep them till you want and delete them when you don't.\n\nEasily switch to a dark or light theme.",
+  "id": "otepad",
+  "display_override": ["window-controls-overlay", "minimal-ui", "browser"],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": ["navigate-existing", "auto"]
+  }
 }
