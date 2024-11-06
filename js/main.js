@@ -1,3 +1,10 @@
+// Set initial theme before DOMContentLoaded
+(function() {
+  const storedTheme = localStorage.getItem("theme") ||
+    (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  document.documentElement.setAttribute("data-theme", storedTheme);
+})();
+
 document.addEventListener("DOMContentLoaded", function () {
   const editDiv = document.getElementById("editable");
   editDiv.contentEditable = true;

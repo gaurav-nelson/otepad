@@ -20,9 +20,10 @@ body {
   height: 100%;
   font-size: 1rem;
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont;
-}
-body {
   background: var(--background-color);
+}
+
+body {
   color: var(--text-color);
 }
 
@@ -80,7 +81,3 @@ button {
   cursor: default;
   user-select: none;
 }
-/*
-.container > div > div:not(:last-child) {
-  border-bottom: dashed 1px rgba(153, 153, 153, 0.1)
-} */
