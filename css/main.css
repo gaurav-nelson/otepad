@@ -1,16 +1,33 @@
 :root {
   --text-color: #161618;
   --background-color: #f2f2f2;
+  --surface-muted: rgba(22, 22, 24, 0.06);
+  --tile-bg: #ffffff;
+  --tile-border: rgba(22, 22, 24, 0.08);
+  --tile-shadow: 0 1px 2px rgba(22, 22, 24, 0.04);
+  --preview-color: rgba(22, 22, 24, 0.55);
+  --font-display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Palatino, serif;
+  --font-mono: "IBM Plex Mono", "Lucida Console", monaco, "Bitstream Vera Sans Mono", monospace;
 }
 
 html[data-theme="light"] {
   --background-color: #f2f2f2;
   --text-color: #161618;
+  --surface-muted: rgba(22, 22, 24, 0.06);
+  --tile-bg: #ffffff;
+  --tile-border: rgba(22, 22, 24, 0.08);
+  --tile-shadow: 0 1px 2px rgba(22, 22, 24, 0.04);
+  --preview-color: rgba(22, 22, 24, 0.55);
 }
 
 html[data-theme="dark"] {
   --background-color: #212124;
   --text-color: #eeeeee;
+  --surface-muted: rgba(238, 238, 238, 0.06);
+  --tile-bg: #2a2a2e;
+  --tile-border: rgba(238, 238, 238, 0.08);
+  --tile-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --preview-color: rgba(238, 238, 238, 0.55);
 }
 
 html,
@@ -19,8 +36,12 @@ body {
   padding: 0;
   height: 100%;
   font-size: 1rem;
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont;
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
   background: var(--background-color);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body {
@@ -30,7 +51,8 @@ body {
 .container {
   background: var(--background-color);
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
 input,
@@ -39,34 +61,344 @@ select {
 }
 
 .editor {
-  font-family: Lucida Console, Lucida Sans Typewriter, monaco,
-    Bitstream Vera Sans Mono, monospace;
-  width: 100vh;
+  font-family: var(--font-mono);
+  font-size: 1.05rem;
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: -0.01em;
+  width: min(100vh, 100%);
+  flex: 1;
+  box-sizing: border-box;
 }
 
 [contenteditable]:focus {
   outline: 0px solid transparent;
 }
 
-#toggleTheme {
-  opacity: 0.5;
+.control-btn.uk-icon-button,
+.control-btn.uk-icon-button:hover,
+.control-btn.uk-icon-button:active,
+.control-btn.uk-icon-button:focus {
+  background: transparent;
+  color: var(--text-color);
+}
+
+.control-btn {
+  opacity: 0.55;
   cursor: pointer;
+  position: fixed;
+  z-index: 20;
+  color: var(--text-color);
+  border: 0;
+  background: transparent;
+  padding: 0;
+  appearance: none;
 }
 
-#toggleTheme:hover {
+.control-btn:hover {
   opacity: 1;
-  transform: scale(1.2);
+  transform: scale(1.15);
 }
 
-#deleteContent {
-  opacity: 0.5;
+.control-btn-theme {
+  top: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-size: 1.45rem;
+  line-height: 1;
+  opacity: 0.8;
+}
+
+.theme-icon {
+  display: block;
+  color: inherit;
+  pointer-events: none;
+  font-size: 1.35rem;
+  line-height: 1;
+  font-family: "Segoe UI Symbol", "Apple Symbols", "Noto Sans Symbols", sans-serif;
+}
+
+.control-btn-add {
+  bottom: 24px;
+  right: 24px;
+}
+
+.control-btn-back {
+  top: 16px;
+  left: 16px;
+}
+
+.control-btn-delete {
+  top: 64px;
+  right: 16px;
+}
+
+.surface-view {
+  min-height: 100%;
+  box-sizing: border-box;
+  padding: 24px 24px 96px;
+  background:
+    radial-gradient(ellipse at top, var(--surface-muted), transparent 55%),
+    var(--background-color);
+}
+
+.surface-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  padding-right: 56px;
+}
+
+.surface-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin: 0;
+  color: var(--text-color);
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3vw, 2.15rem);
+  font-weight: 500;
+  font-optical-sizing: auto;
+  letter-spacing: -0.035em;
+  line-height: 1;
+}
+
+.brand-logo {
+  display: block;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  image-rendering: auto;
+}
+
+.pad-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.pad-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 160px;
+  padding: 18px 16px;
+  border: 1px solid var(--tile-border);
+  border-radius: 10px;
+  background: var(--tile-bg);
+  box-shadow: var(--tile-shadow);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.pad-tile:hover,
+.pad-tile:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  outline: none;
+}
+
+.pad-tile-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 500;
+  font-optical-sizing: auto;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  word-break: break-word;
+  color: var(--text-color);
+}
+
+.pad-tile-preview {
+  margin: 0;
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  color: var(--preview-color);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.editor-view {
+  min-height: 100%;
+}
+
+.editor-view[hidden],
+.surface-view[hidden] {
+  display: none !important;
+}
+
+.pad-title-wrap {
+  width: min(100vh, 100%);
+  box-sizing: border-box;
+  padding: 28px 72px 8px;
+}
+
+.pad-title,
+.pad-title-input {
+  display: block;
+  margin: 0;
+  padding: 6px 8px;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-color);
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  font-weight: 500;
+  font-optical-sizing: auto;
+  letter-spacing: -0.04em;
+  line-height: 1.15;
+  text-align: left;
+}
+
+.pad-title {
+  cursor: text;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0.92;
+}
+
+.pad-title:hover,
+.pad-title:focus-visible {
+  opacity: 1;
+  background: var(--surface-muted);
+  outline: none;
+}
+
+.pad-title-input {
+  border-color: var(--tile-border);
+  background: var(--tile-bg);
+  outline: none;
+  user-select: text;
+}
+
+.pad-title-input:focus {
+  border-color: var(--text-color);
+}
+
+.confirm-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.confirm-dialog[hidden] {
+  display: none !important;
+}
+
+.confirm-dialog-backdrop {
   position: absolute;
-  cursor: pointer;
+  inset: 0;
+  background: rgba(22, 22, 24, 0.45);
 }
 
-#deleteContent:hover {
-  opacity: 1;
-  transform: scale(1.2);
+html[data-theme="dark"] .confirm-dialog-backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.confirm-dialog-panel {
+  position: relative;
+  width: min(100%, 360px);
+  padding: 28px 24px 20px;
+  border: 1px solid var(--tile-border);
+  border-radius: 14px;
+  background: var(--tile-bg);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+  color: var(--text-color);
+}
+
+.confirm-dialog-title {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 500;
+  font-optical-sizing: auto;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  color: var(--text-color);
+}
+
+.confirm-dialog-message {
+  margin: 0 0 24px;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  color: var(--preview-color);
+  word-break: break-word;
+}
+
+.confirm-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.confirm-btn {
+  appearance: none;
+  border: 1px solid var(--tile-border);
+  border-radius: 8px;
+  padding: 0.55rem 1rem;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.confirm-btn-cancel {
+  background: transparent;
+  color: var(--text-color);
+}
+
+.confirm-btn-cancel:hover,
+.confirm-btn-cancel:focus-visible {
+  background: var(--surface-muted);
+  outline: none;
+}
+
+.confirm-btn-danger {
+  background: #c23b3b;
+  border-color: #c23b3b;
+  color: #fff;
+}
+
+.confirm-btn-danger:hover,
+.confirm-btn-danger:focus-visible {
+  background: #a83030;
+  border-color: #a83030;
+  outline: none;
 }
 
 .drag {
@@ -81,4 +413,10 @@ select {
 a,
 button {
   user-select: none;
+}
+
+.editor,
+.editor *,
+.pad-title-input {
+  user-select: text;
 }
