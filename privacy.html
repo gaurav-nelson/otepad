@@ -1,60 +1,206 @@
 <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset='utf-8'>
-      <meta name='viewport' content='width=device-width'>
-      <title>Privacy Policy</title>
-      <style> body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding:1em; } </style>
-    </head>
-    <body>
-    <strong>Privacy Policy</strong> <p>
-                  Gaurav Nelson built the otepad app as
-                  an Open Source app. This SERVICE is provided by
-                  Gaurav Nelson at no cost and is intended for use as
-                  is.
-                </p> <p>
-                  This page is used to inform visitors regarding my
-                  policies with the collection, use, and disclosure of Personal
-                  Information if anyone decided to use my Service.
-                </p> <p>
-                  If you choose to use my Service, then you agree to
-                  the collection and use of information in relation to this
-                  policy. The Personal Information that I collect is
-                  used for providing and improving the Service. I will not use or share your information with
-                  anyone except as described in this Privacy Policy.
-                </p> <p>
-                  The terms used in this Privacy Policy have the same meanings
-                  as in our Terms and Conditions, which are accessible at
-                  otepad unless otherwise defined in this Privacy Policy.
-                </p> <p><strong>Information Collection and Use</strong></p> <p>
-                  This application does not collect any data.
-                </p> <p>
-                  This Service does not use these “cookies” explicitly. However,
-                  the app may use third-party code and libraries that use
-                  “cookies” to collect information and improve their services.
-                </p> <p><strong>Children’s Privacy</strong></p> <!----> <div><p>
-                    I do not knowingly collect personally
-                    identifiable information from children. I 
-                    encourage all children to never submit any personally
-                    identifiable information through 
-                    the Application and/or Services.
-                    I encourage parents and legal guardians to monitor 
-                    their children's Internet usage and to help enforce this Policy by instructing 
-                    their children never to provide personally identifiable information through the Application and/or Services without their permission. If you have reason to believe that a child 
-                    has provided personally identifiable information to us through the Application and/or Services, 
-                    please contact us. You must also be at least 16 years of age to consent to the processing 
-                    of your personally identifiable information in your country (in some countries we may allow your parent 
-                    or guardian to do so on your behalf).
-                  </p></div> <p><strong>Changes to This Privacy Policy</strong></p> <p>
-                  I may update our Privacy Policy from
-                  time to time. Thus, you are advised to review this page
-                  periodically for any changes. I will
-                  notify you of any changes by posting the new Privacy Policy on
-                  this page.
-                </p> <p>This policy is effective as of 2022-01-17</p> <p><strong>Contact Us</strong></p> <p>
-                  If you have any questions or suggestions about my
-                  Privacy Policy, do not hesitate to contact me at gaurav@abtevrythng.com.
-                </p>
-    </body>
-    </html>
-      
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self';"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="description"
+      content="Privacy Policy for otepad — a local-first note-taking app."
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=5"
+    />
+    <link rel="icon" sizes="192x192" href="img/icon-192x192.png" />
+    <link rel="apple-touch-icon" href="img/icon-192x192.png" />
+    <meta name="theme-color" content="#212124" />
+    <meta name="twitter:creator" content="@GauravNelson" />
+    <title>Privacy Policy · otepad</title>
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <script>
+      (function () {
+        var THEME_KEY = "theme";
+        var stored =
+          localStorage.getItem(THEME_KEY) ||
+          (window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light");
+        document.documentElement.setAttribute("data-theme", stored);
+      })();
+    </script>
+  </head>
+  <body class="legal-page">
+    <div class="legal-shell">
+      <header class="legal-header">
+        <a class="legal-brand" href="index.html">
+          <img
+            class="brand-logo"
+            src="img/icon-96x96.png"
+            width="36"
+            height="36"
+            alt=""
+            decoding="async"
+          />
+          <span>otepad</span>
+        </a>
+      </header>
+
+      <article class="legal-article">
+        <h1 class="legal-title">Privacy Policy</h1>
+        <p class="legal-updated">Last updated: July 28, 2026</p>
+
+        <p>
+          This Privacy Policy describes how otepad (“the App”, “we”, “us”, or
+          “our”), provided by Gaurav Nelson, handles information when you use
+          the App. otepad is an open-source, free note-taking application
+          offered as-is.
+        </p>
+        <p>
+          By using the App, you agree to this Privacy Policy. If you do not
+          agree, please do not use the App.
+        </p>
+
+        <h2>Summary</h2>
+        <p>
+          otepad is designed to keep your notes on your device. We do not
+          operate a backend that collects, stores, or sells your personal
+          information or note content.
+        </p>
+
+        <h2>Information we collect</h2>
+        <p>
+          We do not collect personal information such as your name, email
+          address, location, contacts, or payment details through the App.
+        </p>
+        <p>The App may store the following information locally on your device:</p>
+        <ul>
+          <li>Note titles and content you create</li>
+          <li>App preferences, such as light or dark theme</li>
+        </ul>
+        <p>
+          This information is saved in your browser or device storage (for
+          example, local storage) and is not transmitted to us.
+        </p>
+
+        <h2>How we use information</h2>
+        <p>
+          Locally stored notes and preferences are used only to provide App
+          features on your device, such as displaying your pads and remembering
+          your theme choice. We do not use this information for advertising,
+          analytics profiles, or resale.
+        </p>
+
+        <h2>Data storage and security</h2>
+        <p>
+          Because notes stay on your device, access to them depends on who can
+          use that device and browser profile. We recommend protecting your
+          device with a passcode, biometric lock, or similar security measure.
+        </p>
+        <p>
+          Clearing site data, uninstalling the App, or using “Delete all” (or
+          deleting individual pads) removes stored notes from that browser or
+          device profile. We cannot recover deleted local data.
+        </p>
+
+        <h2>Cookies and third-party services</h2>
+        <p>
+          The App does not use tracking cookies for advertising or analytics.
+          It may use local browser storage as described above.
+        </p>
+        <p>
+          If you open the App from a hosted URL, your browser may load fonts or
+          other static assets from third-party providers (for example, Google
+          Fonts). Those providers may process technical request data according
+          to their own policies. The App does not embed advertising SDKs or
+          social tracking pixels.
+        </p>
+
+        <h2>Children’s privacy</h2>
+        <p>
+          The App is not directed to children under 13, and we do not knowingly
+          collect personal information from children. If you believe a child has
+          provided personal information to us, please contact us and we will
+          take appropriate steps.
+        </p>
+
+        <h2>Changes to this Privacy Policy</h2>
+        <p>
+          We may update this Privacy Policy from time to time. Changes will be
+          posted on this page with an updated “Last updated” date. Continued use
+          of the App after changes become effective constitutes acceptance of
+          the revised policy.
+        </p>
+
+        <h2>Contact us</h2>
+        <p>
+          If you have questions about this Privacy Policy, contact
+          <a href="mailto:gaurav@abtevrythng.com">gaurav@abtevrythng.com</a>.
+        </p>
+        <p>
+          Related:
+          <a href="terms.html">Terms of Use</a>
+        </p>
+      </article>
+    </div>
+
+    <button
+      id="toggleTheme"
+      class="control-btn control-btn-theme"
+      aria-label="Switch to dark theme"
+      type="button"
+    >
+      <span id="themeIcon" class="theme-icon" aria-hidden="true"></span>
+    </button>
+
+    <script>
+      (function () {
+        var THEME_KEY = "theme";
+        var themeBtn = document.getElementById("toggleTheme");
+        var themeIcon = document.getElementById("themeIcon");
+        var ICON_MOON =
+          '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+          '<path d="M2.03009 12.42C2.39009 17.57 6.76009 21.76 11.9901 21.99C15.6801 22.15 18.9801 20.43 20.9601 17.72C21.7801 16.61 21.3401 15.87 19.9701 16.12C19.3001 16.24 18.6101 16.29 17.8901 16.26C13.0001 16.06 9.00009 11.97 8.98009 7.13996C8.97009 5.83996 9.24009 4.60996 9.73009 3.48996C10.2701 2.24996 9.62009 1.65996 8.37009 2.18996C4.41009 3.85996 1.70009 7.84996 2.03009 12.42Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+          "</svg>";
+        var ICON_SUN =
+          '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+          '<path d="M12 18.5C15.5899 18.5 18.5 15.5899 18.5 12C18.5 8.41015 15.5899 5.5 12 5.5C8.41015 5.5 5.5 8.41015 5.5 12C5.5 15.5899 8.41015 18.5 12 18.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+          '<path d="M19.14 19.14L19.01 19.01M19.01 4.99L19.14 4.86L19.01 4.99ZM4.86 19.14L4.99 19.01L4.86 19.14ZM12 2.08V2V2.08ZM12 22V21.92V22ZM2.08 12H2H2.08ZM22 12H21.92H22ZM4.99 4.99L4.86 4.86L4.99 4.99Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+          "</svg>";
+
+        function syncIcon() {
+          var isDark =
+            document.documentElement.getAttribute("data-theme") === "dark";
+          themeIcon.innerHTML = isDark ? ICON_SUN : ICON_MOON;
+          themeBtn.setAttribute(
+            "aria-label",
+            isDark ? "Switch to light theme" : "Switch to dark theme"
+          );
+        }
+
+        themeBtn.addEventListener("click", function () {
+          var next =
+            document.documentElement.getAttribute("data-theme") === "light"
+              ? "dark"
+              : "light";
+          document.documentElement.setAttribute("data-theme", next);
+          try {
+            localStorage.setItem(THEME_KEY, next);
+          } catch (e) {}
+          syncIcon();
+        });
+
+        syncIcon();
+      })();
+    </script>
+  </body>
+</html>

@@ -5,7 +5,7 @@
   "short_name": "otepad",
   "scope": "/",
   "display": "standalone",
-  "start_url": "https://otepad.vercel.app/",
+  "start_url": "https://otepad.docswriter.com/",
   "background_color": "#242525",
   "theme_color": "#323332",
   "orientation": "any",

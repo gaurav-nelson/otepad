@@ -58,6 +58,14 @@
         aria-label="Add pad"
         type="button"
       ></button>
+      <button
+        id="deleteAllPads"
+        class="uk-icon-button control-btn control-btn-delete"
+        uk-icon="trash"
+        uk-tooltip="title: Delete all pads; pos: left"
+        aria-label="Delete all pads"
+        type="button"
+      ></button>
     </div>
 
     <div id="editorView" class="editor-view" hidden>
@@ -83,7 +91,7 @@
         </div>
         <div
           id="editable"
-          class="no-drag editor uk-padding"
+          class="no-drag editor"
           contenteditable="true"
           role="textbox"
           aria-multiline="true"
@@ -115,7 +123,7 @@
       aria-label="Switch to dark theme"
       type="button"
     >
-      <span id="themeIcon" class="theme-icon" aria-hidden="true">☾</span>
+      <span id="themeIcon" class="theme-icon" aria-hidden="true"></span>
     </button>
 
     <div
