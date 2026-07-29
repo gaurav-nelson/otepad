@@ -1,0 +1,55 @@
+{
+  "name": "otepad",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A minimal free temporary note-taking app for you - not your regular text editor.",
+  "scripts": {
+    "dev": "vite",
+    "theme:build": "astryx theme build src/theme/otepadTheme.ts -o src/theme/otepad.css",
+    "build": "npm run theme:build && tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gaurav-nelson/otepad.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gaurav-nelson/otepad/issues"
+  },
+  "homepage": "https://github.com/gaurav-nelson/otepad#readme",
+  "dependencies": {
+    "@astryxdesign/cli": "^0.1.9",
+    "@astryxdesign/core": "^0.1.9",
+    "@astryxdesign/theme-butter": "^0.1.9",
+    "@astryxdesign/theme-gothic": "^0.1.9",
+    "@astryxdesign/theme-matcha": "^0.1.9",
+    "@astryxdesign/theme-neutral": "^0.1.9",
+    "@astryxdesign/theme-stone": "^0.1.9",
+    "@astryxdesign/theme-y2k": "^0.1.9",
+    "@fontsource/dm-sans": "^5.3.0",
+    "@fontsource/figtree": "^5.3.0",
+    "@fontsource/fraunces": "^5.3.0",
+    "@fontsource/fustat": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@fontsource/manufacturing-consent": "^5.3.0",
+    "@fontsource/montserrat": "^5.3.0",
+    "@fontsource/outfit": "^5.3.0",
+    "@fontsource/playwrite-us-trad": "^5.3.0",
+    "@fontsource/poppins": "^5.3.0",
+    "@stylexjs/stylex": "^0.19.0",
+    "lucide-react": "^1.27.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^4.7.0",
+    "typescript": "^7.0.2",
+    "vite": "^6.4.3",
+    "vite-plugin-pwa": "^1.3.0"
+  }
+}

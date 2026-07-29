@@ -1,0 +1,222 @@
+/* Offline legal pages — Fraunces + sizes aligned with the app */
+@font-face {
+  font-family: "Fraunces";
+  src: url("/fonts/fraunces-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Fraunces";
+  src: url("/fonts/fraunces-500.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Fraunces";
+  src: url("/fonts/fraunces-600.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/fonts/ibm-plex-mono-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/fonts/ibm-plex-mono-500.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --text-color: #161618;
+  --background-color: #f2f2f2;
+  --surface-muted: rgba(22, 22, 24, 0.06);
+  --preview-color: rgba(22, 22, 24, 0.55);
+  --font-display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+}
+
+html[data-theme="light"] {
+  --background-color: #f2f2f2;
+  --text-color: #161618;
+  --surface-muted: rgba(22, 22, 24, 0.06);
+  --preview-color: rgba(22, 22, 24, 0.55);
+}
+
+html[data-theme="dark"] {
+  --background-color: #212124;
+  --text-color: #eeeeee;
+  --surface-muted: rgba(238, 238, 238, 0.06);
+  --preview-color: rgba(238, 238, 238, 0.55);
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  background: var(--background-color);
+  color: var(--text-color);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.brand-logo {
+  display: block;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 8px;
+}
+
+.control-btn {
+  opacity: 0.55;
+  cursor: pointer;
+  position: fixed;
+  z-index: 20;
+  color: var(--text-color);
+  border: 0;
+  background: transparent;
+  padding: 0;
+  appearance: none;
+  top: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+}
+
+.control-btn:hover {
+  opacity: 1;
+}
+
+.theme-icon {
+  display: block;
+  width: 22px;
+  height: 22px;
+}
+
+.theme-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.legal-page,
+.legal-page * {
+  user-select: text;
+}
+
+.legal-page .control-btn,
+.legal-page .control-btn * {
+  user-select: none;
+}
+
+.legal-shell {
+  min-height: 100%;
+  box-sizing: border-box;
+  padding: 24px 24px 72px;
+  background:
+    radial-gradient(ellipse at top, var(--surface-muted), transparent 55%),
+    var(--background-color);
+}
+
+.legal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  max-width: 720px;
+  margin: 0 auto 40px;
+  padding-right: 56px;
+}
+
+.legal-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: clamp(1.5rem, 3vw, 1.85rem);
+  font-weight: 500;
+  font-optical-sizing: auto;
+  letter-spacing: -0.035em;
+  line-height: 1;
+}
+
+.legal-brand:hover,
+.legal-brand:focus-visible {
+  opacity: 0.8;
+  outline: none;
+}
+
+.legal-article {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.legal-title {
+  margin: 0 0 8px;
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  font-weight: 500;
+  font-optical-sizing: auto;
+  letter-spacing: -0.04em;
+  line-height: 1.15;
+}
+
+.legal-updated {
+  margin: 0 0 36px;
+  font-size: 0.95rem;
+  color: var(--preview-color);
+  letter-spacing: -0.01em;
+}
+
+.legal-article h2 {
+  margin: 2rem 0 0.75rem;
+  font-size: 1.35rem;
+  font-weight: 500;
+  font-optical-sizing: auto;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+}
+
+.legal-article p,
+.legal-article li {
+  margin: 0 0 1rem;
+  font-size: 1.05rem;
+  line-height: 1.65;
+  letter-spacing: -0.01em;
+}
+
+.legal-article ul {
+  margin: 0 0 1rem;
+  padding-left: 1.25rem;
+}
+
+.legal-article a {
+  color: var(--text-color);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.legal-article a:hover,
+.legal-article a:focus-visible {
+  opacity: 0.75;
+  outline: none;
+}

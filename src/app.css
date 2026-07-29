@@ -1,0 +1,359 @@
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+/*
+ * Keep otepad’s current type scale (16px base / 1.25 ratio) across Astryx
+ * themes. Font families and colors still come from each theme’s CSS.
+ * html + attribute beats theme package `[data-astryx-theme="…"]` selectors.
+ */
+html[data-astryx-theme] {
+  --font-size-4xs: 0.3125rem;
+  --font-size-3xs: 0.4375rem;
+  --font-size-2xs: 0.5rem;
+  --font-size-xs: 0.625rem;
+  --font-size-sm: 0.8125rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5625rem;
+  --font-size-2xl: 1.9375rem;
+  --font-size-3xl: 2.4375rem;
+  --font-size-4xl: 3.0625rem;
+  --font-size-5xl: 3.8125rem;
+  --text-heading-1-size: var(--font-size-2xl);
+  --text-heading-2-size: var(--font-size-xl);
+  --text-heading-3-size: var(--font-size-lg);
+  --text-heading-4-size: var(--font-size-base);
+  --text-heading-5-size: var(--font-size-sm);
+  --text-heading-6-size: var(--font-size-xs);
+  --text-body-size: var(--font-size-base);
+  --text-large-size: var(--font-size-lg);
+  --text-label-size: var(--font-size-base);
+}
+
+#root > * {
+  height: 100%;
+}
+
+body {
+  background: var(--color-background-body);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-body);
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.otepad-shell {
+  position: relative;
+  min-height: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex !important;
+  flex-direction: column !important;
+  background:
+    radial-gradient(
+      ellipse at top,
+      color-mix(in srgb, var(--color-text-primary) 6%, transparent),
+      transparent 55%
+    ),
+    var(--color-background-body);
+}
+
+.otepad-surface {
+  box-sizing: border-box;
+  flex: 1 1 auto;
+  min-height: 100%;
+  height: 100%;
+  padding: var(--spacing-6);
+  padding-bottom: var(--spacing-12);
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.otepad-surface-header {
+  margin-bottom: var(--spacing-8);
+  flex-shrink: 0;
+  flex-wrap: nowrap !important;
+  min-width: 0;
+}
+
+.otepad-brand {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.otepad-header-actions {
+  flex-shrink: 0;
+}
+
+.otepad-brand-logo {
+  display: block;
+  width: var(--spacing-9);
+  height: var(--spacing-9);
+  border-radius: var(--radius-element);
+  flex-shrink: 0;
+}
+
+.otepad-brand-title {
+  font-optical-sizing: auto;
+  font-size: clamp(1.75rem, 3vw, 2.15rem);
+  letter-spacing: -0.035em;
+  font-weight: 500;
+  line-height: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.otepad-add-pad {
+  margin-inline-start: var(--spacing-1);
+  flex-shrink: 0;
+}
+
+@media (max-width: 420px) {
+  .otepad-brand-title {
+    font-size: clamp(1.35rem, 6vw, 1.75rem);
+  }
+
+  .otepad-surface {
+    padding-inline: var(--spacing-4);
+  }
+}
+
+.otepad-editor-toolbar {
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-4) 0;
+  flex-shrink: 0;
+}
+
+.editor-view {
+  box-sizing: border-box;
+  min-height: 100%;
+  height: 100%;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.otepad-search-row {
+  width: min(100%, 22rem);
+  max-width: 22rem;
+  margin: 0 auto var(--spacing-6);
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.otepad-search {
+  width: 100%;
+}
+
+.otepad-search.astryx-text-input,
+.otepad-search .astryx-text-input {
+  min-height: var(--spacing-12);
+}
+
+.otepad-search input {
+  min-height: var(--spacing-12);
+  font-size: var(--font-size-lg);
+  line-height: 1.3;
+}
+
+.otepad-search-meta {
+  padding-inline: var(--spacing-1);
+}
+
+.otepad-search-empty {
+  width: 100%;
+  max-width: 960px;
+  margin-inline: auto;
+  flex: 1 1 auto;
+  align-self: stretch;
+}
+
+.otepad-pad-grid {
+  width: 100%;
+  max-width: 960px;
+  margin-inline: auto;
+  flex-shrink: 0;
+  align-self: stretch;
+}
+
+.otepad-pad-card {
+  position: relative;
+  min-height: 160px;
+  width: 100%;
+}
+
+.otepad-pad-card-body {
+  height: 100%;
+  min-height: inherit;
+}
+
+.otepad-pad-title {
+  font-optical-sizing: auto;
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  padding-right: var(--spacing-7);
+}
+
+.otepad-pad-preview {
+  font-family: var(--font-family-code);
+  font-size: 0.8rem;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+}
+
+.otepad-pad-updated {
+  margin-top: auto;
+  font-size: 0.75rem;
+  letter-spacing: -0.01em;
+}
+
+.otepad-pad-select {
+  position: absolute;
+  top: var(--spacing-2);
+  right: var(--spacing-2);
+  z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-fast) var(--easing-standard, ease);
+}
+
+.otepad-pad-card:hover .otepad-pad-select,
+.otepad-pad-card:focus-within .otepad-pad-select,
+.otepad-pad-grid.is-selecting .otepad-pad-select,
+.otepad-pad-card.is-selected .otepad-pad-select {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (hover: none) {
+  .otepad-pad-select {
+    opacity: 0.7;
+    pointer-events: auto;
+  }
+}
+
+.otepad-editor {
+  box-sizing: border-box;
+  min-height: 100%;
+  width: min(100vh, 100%);
+  margin-inline: auto;
+  padding: var(--spacing-6) var(--spacing-12) var(--spacing-12);
+}
+
+.otepad-editor-body {
+  font-family: var(--font-family-code);
+  font-size: 1.05rem;
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: -0.01em;
+  min-height: 60vh;
+  outline: none;
+  white-space: pre-wrap;
+  word-break: break-word;
+  user-select: text;
+}
+
+.otepad-editor-body:focus {
+  outline: none;
+}
+
+.otepad-title-button,
+.otepad-title-input {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0 0 var(--spacing-4);
+  /* No horizontal padding/border inset — align with editor body glyphs. */
+  padding: var(--spacing-1-5) 0;
+  border: none;
+  border-radius: var(--radius-element);
+  background: transparent;
+  color: var(--color-text-primary);
+  font-family: var(--font-family-heading);
+  font-optical-sizing: auto;
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1.15;
+  text-align: left;
+  outline: 1px solid transparent;
+  outline-offset: -1px;
+}
+
+.otepad-title-button {
+  cursor: text;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0.92;
+}
+
+.otepad-title-button:hover,
+.otepad-title-button:focus-visible {
+  opacity: 1;
+  background: color-mix(in srgb, var(--color-text-primary) 6%, transparent);
+  outline-color: transparent;
+}
+
+.otepad-title-input {
+  background: var(--color-background-surface);
+  outline-color: var(--color-border);
+  user-select: text;
+  appearance: none;
+}
+
+.otepad-title-input:focus {
+  outline-color: var(--color-text-primary);
+}
+
+.otepad-footer {
+  width: 100%;
+  max-width: 960px;
+  margin-inline: auto;
+  margin-top: auto !important;
+  padding-top: var(--spacing-12);
+  flex-shrink: 0;
+  align-self: stretch;
+  justify-content: center !important;
+  font-family: var(--font-family-body);
+  font-optical-sizing: auto;
+  font-size: 0.9rem;
+  letter-spacing: -0.01em;
+}
+
+.drag {
+  -webkit-app-region: drag;
+}
+
+.no-drag {
+  -webkit-app-region: no-drag;
+}
+
+*,
+a,
+button {
+  user-select: none;
+}
+
+.otepad-editor-body,
+.otepad-editor-body *,
+.otepad-title-input {
+  user-select: text;
+}
+
+@media (max-width: 640px) {
+  .otepad-editor {
+    padding: var(--spacing-5) var(--spacing-10) var(--spacing-12);
+  }
+}
