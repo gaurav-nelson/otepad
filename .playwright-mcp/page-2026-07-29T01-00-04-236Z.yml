@@ -1,0 +1,39 @@
+- main "Pads" [ref=e5]:
+  - generic [ref=e6]:
+    - generic [ref=e7]:
+      - heading "otepad" [level=1] [ref=e8]
+      - button "Add pad" [ref=e9] [cursor=pointer]:
+        - status
+    - generic [ref=e14]:
+      - button "Delete all pads" [ref=e15] [cursor=pointer]:
+        - status
+      - button "Theme" [ref=e21] [cursor=pointer]:
+        - status
+      - button "Switch to dark theme" [ref=e30] [cursor=pointer]:
+        - status
+  - generic [ref=e36]:
+    - generic: Search pads
+    - textbox "Search pads" [ref=e42]:
+      - /placeholder: Search pads…
+  - generic [ref=e44] [cursor=pointer]:
+    - button "Open sample" [ref=e45]
+    - generic:
+      - generic:
+        - generic:
+          - checkbox "Select sample"
+        - generic: Select sample
+    - generic [ref=e46]:
+      - heading "sample" [level=2] [ref=e47]
+      - generic [ref=e48]: Empty
+      - time [ref=e50]: now
+  - generic [ref=e51]:
+    - link "Privacy" [ref=e52] [cursor=pointer]:
+      - /url: /privacy.html
+    - generic [ref=e54]: ·
+    - link "Terms" [ref=e55] [cursor=pointer]:
+      - /url: /terms.html
+    - generic [ref=e57]: ·
+    - link "GitHub (opens in new tab)" [ref=e58] [cursor=pointer]:
+      - /url: https://github.com/gaurav-nelson/otepad
+      - generic [ref=e59]: GitHub
+      - generic: (opens in new tab)

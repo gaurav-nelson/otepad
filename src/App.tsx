@@ -294,7 +294,7 @@ export function App() {
 
   return (
     <Theme theme={appTheme.theme} mode={colorMode}>
-      <VStack className="otepad-shell" gap={0} minHeight="100%" height="100%">
+      <VStack className="otepad-shell" gap={0} minHeight="100%">
         {activePad ? (
           <EditorView
             pad={activePad}

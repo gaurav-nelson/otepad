@@ -35,7 +35,9 @@ html[data-astryx-theme] {
 }
 
 #root > * {
-  height: 100%;
+  /* min-height only — a fixed height locks the flex column to the
+   * viewport and lets the editor title crush when body content grows. */
+  min-height: 100%;
 }
 
 body {
@@ -51,7 +53,6 @@ body {
 .otepad-shell {
   position: relative;
   min-height: 100%;
-  height: 100%;
   box-sizing: border-box;
   display: flex !important;
   flex-direction: column !important;
@@ -66,9 +67,8 @@ body {
 
 .otepad-surface {
   box-sizing: border-box;
-  flex: 1 1 auto;
+  flex: 1 0 auto;
   min-height: 100%;
-  height: 100%;
   padding: var(--spacing-6);
   padding-bottom: var(--spacing-12);
   display: flex !important;
@@ -135,8 +135,8 @@ body {
 
 .editor-view {
   box-sizing: border-box;
+  flex: 1 0 auto;
   min-height: 100%;
-  height: 100%;
   display: flex !important;
   flex-direction: column !important;
 }
@@ -245,13 +245,14 @@ body {
 
 .otepad-editor {
   box-sizing: border-box;
-  min-height: 100%;
+  flex: 1 0 auto;
   width: min(100vh, 100%);
   margin-inline: auto;
   padding: var(--spacing-6) var(--spacing-12) var(--spacing-12);
 }
 
 .otepad-editor-body {
+  flex: 1 0 auto;
   font-family: var(--font-family-code);
   font-size: 1.05rem;
   font-weight: 400;
@@ -273,6 +274,7 @@ body {
   display: block;
   width: 100%;
   box-sizing: border-box;
+  flex-shrink: 0;
   margin: 0 0 var(--spacing-4);
   /* No horizontal padding/border inset — align with editor body glyphs. */
   padding: var(--spacing-1-5) 0;
