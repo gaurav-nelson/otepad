@@ -1,6 +1,6 @@
 {
   "name": "otepad",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "private": true,
   "type": "module",
   "description": "A minimal free temporary note-taking app for you - not your regular text editor.",
@@ -40,6 +40,7 @@
     "@fontsource/playwrite-us-trad": "^5.3.0",
     "@fontsource/poppins": "^5.3.0",
     "@stylexjs/stylex": "^0.19.0",
+    "fflate": "^0.8.3",
     "lucide-react": "^1.27.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"

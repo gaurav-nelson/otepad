@@ -149,6 +149,45 @@ body {
   align-self: center;
 }
 
+.otepad-notice-row {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto var(--spacing-6);
+  flex-shrink: 0;
+  align-self: stretch;
+}
+
+.otepad-notice-details {
+  padding-top: var(--spacing-2);
+}
+
+.otepad-hidden-file-input {
+  display: none !important;
+}
+
+.otepad-surface.is-drag-over {
+  outline: 2px dashed var(--color-brand-primary, var(--color-text-primary));
+  outline-offset: -8px;
+}
+
+.otepad-drag-drop-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: color-mix(in srgb, var(--color-background-body) 85%, transparent);
+  backdrop-filter: blur(4px);
+  pointer-events: none;
+}
+
+.otepad-drag-drop-badge {
+  padding: var(--spacing-8) var(--spacing-12);
+  border-radius: var(--radius-card);
+  background: var(--color-background-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--elevation-high, 0 12px 32px rgba(0, 0, 0, 0.2));
+  color: var(--color-text-primary);
+}
+
 .otepad-search {
   width: 100%;
 }

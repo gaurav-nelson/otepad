@@ -6,8 +6,16 @@ import { EditorView } from "./components/EditorView";
 import { SurfaceView } from "./components/SurfaceView";
 import { getAppTheme } from "./theme/catalog";
 import {
+  buildOtpBlob,
+  downloadBlob,
+  importNotesFromFiles,
+  otpFileName,
+  uniqueTitle,
+} from "./lib/transfer";
+import {
   createPad,
   debounce,
+  generateId,
   isTitleTaken,
   loadStore,
   nextUntitledTitle,
@@ -28,6 +36,13 @@ import {
   type PadStore,
   type ThemeMode,
 } from "./lib/pads";
+
+export type TransferNotice = {
+  status: "error" | "warning" | "success" | "info";
+  title: string;
+  description: string;
+  details?: string[];
+} | null;
 
 const canStore = storageAvailable("localStorage");
 const initialStore = loadStore(canStore);
@@ -53,6 +68,7 @@ export function App() {
     () => new Set(),
   );
   const [confirm, setConfirm] = useState<ConfirmState>(null);
+  const [notice, setNotice] = useState<TransferNotice>(null);
   const confirmActionRef = useRef<(() => void) | null>(null);
 
   const activePad = useMemo(() => {
@@ -114,6 +130,14 @@ export function App() {
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [activePadId, selectedPadIds.size]);
 
+  useEffect(() => {
+    if (!notice || notice.status !== "success") return;
+    const t = setTimeout(() => {
+      setNotice(null);
+    }, 6000);
+    return () => clearTimeout(t);
+  }, [notice]);
+
   const commitStore = useCallback((next: PadStore) => {
     setStore(next);
     persistStore(next, canStore);
@@ -121,7 +145,8 @@ export function App() {
 
   const updatePads = useCallback((updater: (pads: Pad[]) => Pad[]) => {
     setStore((prev) => {
-      const next = { version: 1 as const, pads: updater(prev.pads) };
+      const nextPads = updater(prev.pads);
+      const next = { version: 1 as const, pads: nextPads };
       persistStore(next, canStore);
       return next;
     });
@@ -292,6 +317,145 @@ export function App() {
     );
   }
 
+  function handleExportSurfacePads() {
+    const selectedIds = Array.from(selectedPadIds).filter((id) =>
+      store.pads.some((pad) => pad.id === id),
+    );
+    const targetPads =
+      selectedIds.length > 0
+        ? store.pads.filter((pad) => selectedPadIds.has(pad.id))
+        : sortedPads(store.pads);
+
+    if (targetPads.length === 0) {
+      setNotice({
+        status: "info",
+        title: "No pads to export",
+        description: "Create or import some pads first before exporting.",
+      });
+      return;
+    }
+
+    try {
+      const blob = buildOtpBlob(targetPads);
+      const filename = otpFileName();
+      downloadBlob(blob, filename);
+      const count = targetPads.length;
+      setNotice({
+        status: "success",
+        title: "Export complete",
+        description: `Saved ${count} ${count === 1 ? "pad" : "pads"} to ${filename}.`,
+      });
+    } catch (err) {
+      setNotice({
+        status: "error",
+        title: "Export failed",
+        description:
+          err instanceof Error
+            ? err.message
+            : "An unexpected error occurred while creating the export archive. Please try again.",
+      });
+    }
+  }
+
+  async function handleImportSurfaceFiles(files: FileList | File[]) {
+    try {
+      const result = await importNotesFromFiles(files);
+
+      if (result.errors.length > 0 && result.notes.length === 0) {
+        setNotice({
+          status: "error",
+          title:
+            result.errors.length === 1
+              ? "Import failed"
+              : `Failed to import ${result.errors.length} files`,
+          description: result.errors[0],
+          details: result.errors.length > 1 ? result.errors : undefined,
+        });
+        return;
+      }
+
+      if (result.notes.length === 0) {
+        if (result.warnings.length > 0) {
+          setNotice({
+            status: "warning",
+            title: "Nothing imported",
+            description: result.warnings[0],
+            details: result.warnings.length > 1 ? result.warnings : undefined,
+          });
+        }
+        return;
+      }
+
+      let quotaFailed = false;
+      updatePads((currentPads) => {
+        const isBlankDefault =
+          currentPads.length === 1 &&
+          currentPads[0].title === "sample" &&
+          !currentPads[0].content.trim();
+
+        const existingPads = isBlankDefault ? [] : currentPads;
+        const takenTitles = new Set(
+          existingPads.map((p) => p.title.toLowerCase()),
+        );
+
+        const createdPads: Pad[] = result.notes.map((imported) => {
+          const title = uniqueTitle(imported.title, takenTitles);
+          return {
+            id: generateId(),
+            title,
+            content: imported.html,
+            updatedAt: imported.updatedAt || Date.now(),
+          };
+        });
+
+        const nextPads = [...existingPads, ...createdPads];
+        try {
+          persistStore({ version: 1, pads: nextPads }, canStore);
+        } catch {
+          quotaFailed = true;
+          return currentPads;
+        }
+        return nextPads;
+      });
+
+      if (quotaFailed) {
+        setNotice({
+          status: "error",
+          title: "Local storage full",
+          description:
+            "Could not save imported pads because your browser's local storage is full. Please delete unnecessary pads to free up space, then try importing again.",
+        });
+        return;
+      }
+
+      const count = result.notes.length;
+      const noteLabel = count === 1 ? "1 pad" : `${count} pads`;
+      if (result.warnings.length > 0 || result.errors.length > 0) {
+        setNotice({
+          status: "warning",
+          title: `Imported ${noteLabel} with warnings`,
+          description: `Successfully imported ${noteLabel}. Some items or files were skipped.`,
+          details: [...result.errors, ...result.warnings],
+        });
+      } else {
+        setNotice({
+          status: "success",
+          title: "Import successful",
+          description: `Successfully imported ${noteLabel} into otepad.`,
+        });
+      }
+    } catch (err) {
+      setNotice({
+        status: "error",
+        title: "Import failed",
+        description:
+          err instanceof Error
+            ? err.message
+            : "An unexpected error occurred while reading the files. Please try again.",
+      });
+    }
+  }
+
   return (
     <Theme theme={appTheme.theme} mode={colorMode}>
       <VStack className="otepad-shell" gap={0} minHeight="100%">
@@ -312,6 +476,7 @@ export function App() {
           <SurfaceView
             pads={sortedPads(store.pads)}
             selectedPadIds={selectedPadIds}
+            notice={notice}
             theme={colorMode}
             themeId={themeId}
             showModeToggle={!appTheme.darkOnly}
@@ -321,6 +486,9 @@ export function App() {
             onToggleSelect={handleToggleSelect}
             onAddPad={handleAddPad}
             onDeletePads={handleDeleteSurfacePads}
+            onExportPads={handleExportSurfacePads}
+            onImportFiles={handleImportSurfaceFiles}
+            onDismissNotice={() => setNotice(null)}
           />
         )}
         <ConfirmDialog

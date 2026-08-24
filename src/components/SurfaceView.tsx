@@ -1,3 +1,4 @@
+import { Banner } from "@astryxdesign/core/Banner";
 import { Button } from "@astryxdesign/core/Button";
 import { ClickableCard } from "@astryxdesign/core/ClickableCard";
 import { CheckboxInput } from "@astryxdesign/core/CheckboxInput";
@@ -11,7 +12,7 @@ import { Text } from "@astryxdesign/core/Text";
 import { TextInput } from "@astryxdesign/core/TextInput";
 import { Timestamp } from "@astryxdesign/core/Timestamp";
 import { VStack } from "@astryxdesign/core/VStack";
-import { Plus, Search, SearchX, Trash2 } from "lucide-react";
+import { Download, Plus, Search, SearchX, Trash2, Upload } from "lucide-react";
 import {
   useDeferredValue,
   useEffect,
@@ -19,9 +20,11 @@ import {
   useRef,
   useState,
   useSyncExternalStore,
+  type DragEvent,
 } from "react";
 import { ThemePicker } from "./ThemePicker";
 import { ThemeToggle } from "./ThemeToggle";
+import type { TransferNotice } from "../App";
 import {
   filterPads,
   previewText,
@@ -60,6 +63,7 @@ function useAddPadLabelMode(): AddPadLabelMode {
 type SurfaceViewProps = {
   pads: Pad[];
   selectedPadIds: Set<string>;
+  notice: TransferNotice;
   theme: ThemeMode;
   themeId: AppThemeId;
   showModeToggle: boolean;
@@ -69,11 +73,15 @@ type SurfaceViewProps = {
   onToggleSelect: (id: string, selected: boolean) => void;
   onAddPad: () => void;
   onDeletePads: () => void;
+  onExportPads: () => void;
+  onImportFiles: (files: FileList | File[]) => void;
+  onDismissNotice: () => void;
 };
 
 export function SurfaceView({
   pads,
   selectedPadIds,
+  notice,
   theme,
   themeId,
   showModeToggle,
@@ -83,11 +91,17 @@ export function SurfaceView({
   onToggleSelect,
   onAddPad,
   onDeletePads,
+  onExportPads,
+  onImportFiles,
+  onDismissNotice,
 }: SurfaceViewProps) {
   const [query, setQuery] = useState("");
+  const [isDragOver, setIsDragOver] = useState(false);
   const deferredQuery = useDeferredValue(query);
   const addPadLabelMode = useAddPadLabelMode();
   const searchRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const dragDepthRef = useRef(0);
 
   const visiblePads = useMemo(
     () => filterPads(pads, deferredQuery),
@@ -103,6 +117,13 @@ export function SurfaceView({
         ? "Delete selected pad"
         : "Delete selected pads"
       : "Delete all pads";
+
+  const exportLabel =
+    selectedCount > 0
+      ? selectedCount === 1
+        ? "Export selected pad (.otp)"
+        : "Export selected pads (.otp)"
+      : "Export pads (.otp)";
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -134,15 +155,91 @@ export function SurfaceView({
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [query]);
 
+  function handleTriggerImport() {
+    fileInputRef.current?.click();
+  }
+
+  function handleFileInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+    if (e.target.files && e.target.files.length > 0) {
+      onImportFiles(e.target.files);
+      e.target.value = "";
+    }
+  }
+
+  function handleDragEnter(e: DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+    dragDepthRef.current += 1;
+    if (e.dataTransfer?.types?.includes("Files")) {
+      setIsDragOver(true);
+    }
+  }
+
+  function handleDragOver(e: DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  function handleDragLeave(e: DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+    dragDepthRef.current -= 1;
+    if (dragDepthRef.current <= 0) {
+      dragDepthRef.current = 0;
+      setIsDragOver(false);
+    }
+  }
+
+  function handleDrop(e: DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+    dragDepthRef.current = 0;
+    setIsDragOver(false);
+    if (e.dataTransfer?.files && e.dataTransfer.files.length > 0) {
+      onImportFiles(e.dataTransfer.files);
+    }
+  }
+
   return (
     <VStack
-      className="otepad-surface"
+      className={`otepad-surface${isDragOver ? " is-drag-over" : ""}`}
       gap={0}
       minHeight="100%"
       height="100%"
       role="main"
       aria-label="Pads"
+      onDragEnter={handleDragEnter}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
     >
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".otp,.txt,text/plain"
+        multiple
+        tabIndex={-1}
+        className="otepad-hidden-file-input"
+        aria-hidden="true"
+        onChange={handleFileInputChange}
+      />
+
+      {isDragOver ? (
+        <HStack
+          className="otepad-drag-drop-overlay"
+          hAlign="center"
+          vAlign="center"
+          aria-live="polite"
+        >
+          <VStack gap={2} hAlign="center" vAlign="center" className="otepad-drag-drop-badge">
+            <Upload size={32} />
+            <Text type="large" color="primary">
+              Drop .otp or .txt files to import
+            </Text>
+          </VStack>
+        </HStack>
+      ) : null}
+
       <HStack
         className="otepad-surface-header drag"
         gap={2}
@@ -181,6 +278,23 @@ export function SurfaceView({
           <IconButton
             variant="ghost"
             size="lg"
+            label={exportLabel}
+            tooltip={exportLabel}
+            icon={<Download />}
+            isDisabled={pads.length === 0}
+            onClick={onExportPads}
+          />
+          <IconButton
+            variant="ghost"
+            size="lg"
+            label="Import pads (.otp, .txt)"
+            tooltip="Import pads (.otp, .txt)"
+            icon={<Upload />}
+            onClick={handleTriggerImport}
+          />
+          <IconButton
+            variant="ghost"
+            size="lg"
             label={deleteLabel}
             tooltip={deleteLabel}
             icon={<Trash2 />}
@@ -193,6 +307,28 @@ export function SurfaceView({
           ) : null}
         </HStack>
       </HStack>
+
+      {notice ? (
+        <VStack className="otepad-notice-row no-drag" gap={0} width="100%">
+          <Banner
+            status={notice.status}
+            title={notice.title}
+            description={notice.description}
+            isDismissable
+            onDismiss={onDismissNotice}
+          >
+            {notice.details && notice.details.length > 0 ? (
+              <VStack gap={1} className="otepad-notice-details">
+                {notice.details.map((detail, idx) => (
+                  <Text key={idx} type="supporting" color="secondary">
+                    • {detail}
+                  </Text>
+                ))}
+              </VStack>
+            ) : null}
+          </Banner>
+        </VStack>
+      ) : null}
 
       <VStack className="otepad-search-row no-drag" gap={2} width="100%">
         <TextInput
