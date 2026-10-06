@@ -17,7 +17,8 @@ export class TransferError extends Error {}
 
 export type ImportedNote = {
   title: string;
-  html: string;
+  content: string;
+  contentFormat: "html" | "markdown";
   updatedAt: number;
 };
 
@@ -121,10 +122,13 @@ export function buildOtpBlob(pads: Pad[]): Blob {
   const files: Record<string, Uint8Array> = {};
   const manifestNotes = pads.map((pad, i) => {
     const name = `notes/${padIndex(i)}.txt`;
-    files[name] = strToU8(htmlToPlainText(pad.content));
+    files[name] = strToU8(
+      pad.contentFormat === "markdown" ? pad.content : htmlToPlainText(pad.content),
+    );
     return {
       file: name.slice("notes/".length),
       title: String(pad.title || "").slice(0, TITLE_MAX_LENGTH),
+      contentFormat: pad.contentFormat === "markdown" ? "markdown" : "html",
       updatedAt: Number.isFinite(pad.updatedAt) ? Math.floor(pad.updatedAt) : Date.now(),
     };
   });
@@ -340,8 +344,15 @@ function safeZipBasename(name: string): string | null {
 
 function noteTitleFor(
   fileName: string,
-  manifestTitles: Map<string, { title: unknown; updatedAt: unknown }>,
-): { title: string; updatedAt?: number } {
+  manifestTitles: Map<
+    string,
+    { title: unknown; updatedAt: unknown; contentFormat: unknown }
+  >,
+): {
+  title: string;
+  updatedAt?: number;
+  contentFormat: "html" | "markdown";
+} {
   const meta = manifestTitles.get(fileName.toLowerCase());
   const title =
     meta && typeof meta.title === "string"
@@ -354,7 +365,11 @@ function noteTitleFor(
     meta.updatedAt > 0
       ? Math.floor(meta.updatedAt)
       : undefined;
-  return { title: title || titleFromFileBase(fileName), updatedAt };
+  return {
+    title: title || titleFromFileBase(fileName),
+    updatedAt,
+    contentFormat: meta?.contentFormat === "markdown" ? "markdown" : "html",
+  };
 }
 
 function notesFromOtpBytes(
@@ -383,7 +398,7 @@ function notesFromOtpBytes(
   const manifestEntry = entries.find((e) => e.name === "manifest.json");
   const manifestTitles = new Map<
     string,
-    { title: unknown; updatedAt: unknown }
+    { title: unknown; updatedAt: unknown; contentFormat: unknown }
   >();
   if (manifestEntry) {
     const raw = extractEntry(bytes, manifestEntry);
@@ -407,10 +422,16 @@ function notesFromOtpBytes(
               typeof item === "object" &&
               typeof (item as { file?: unknown }).file === "string"
             ) {
-              const rec = item as { file: string; title?: unknown; updatedAt?: unknown };
+              const rec = item as {
+                file: string;
+                title?: unknown;
+                updatedAt?: unknown;
+                contentFormat?: unknown;
+              };
               manifestTitles.set(String(rec.file).toLowerCase(), {
                 title: rec.title,
                 updatedAt: rec.updatedAt,
+                contentFormat: rec.contentFormat,
               });
             }
           }
@@ -448,10 +469,11 @@ function notesFromOtpBytes(
       continue;
     }
     const text = strFromU8(raw);
-    const { title, updatedAt } = noteTitleFor(base, manifestTitles);
+    const { title, updatedAt, contentFormat } = noteTitleFor(base, manifestTitles);
     notes.push({
       title,
-      html: textToEditorHtml(text),
+      content: contentFormat === "markdown" ? text : textToEditorHtml(text),
+      contentFormat,
       updatedAt: updatedAt ?? Date.now(),
     });
   }
@@ -508,7 +530,8 @@ async function notesFromTxtFile(file: File): Promise<ImportFileResult> {
     notes: [
       {
         title: titleFromFileBase(file.name),
-        html: textToEditorHtml(text),
+        content: text.replace(/\r\n?/g, "\n").replace(/\u0000/g, ""),
+        contentFormat: "markdown",
         updatedAt: Number.isFinite(file.lastModified) && file.lastModified > 0
           ? Math.floor(file.lastModified)
           : Date.now(),

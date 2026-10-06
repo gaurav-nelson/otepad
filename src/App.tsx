@@ -211,9 +211,24 @@ export function App() {
     });
   }
 
-  function handleContentChange(html: string) {
+  function handleContentChange(content: string) {
     if (!activePad) return;
-    persistContent(activePad.id, html);
+    persistContent(activePad.id, content);
+  }
+
+  function handleContentFormatChange(
+    contentFormat: "html" | "markdown",
+    content: string,
+  ) {
+    if (!activePad) return;
+    persistContent.cancel();
+    updatePads((pads) =>
+      pads.map((pad) =>
+        pad.id === activePad.id
+          ? { ...pad, content, contentFormat, updatedAt: Date.now() }
+          : pad,
+      ),
+    );
   }
 
   function handleTitleChange(rawTitle: string): boolean {
@@ -403,7 +418,8 @@ export function App() {
           return {
             id: generateId(),
             title,
-            content: imported.html,
+            content: imported.content,
+            contentFormat: imported.contentFormat,
             updatedAt: imported.updatedAt || Date.now(),
           };
         });
@@ -470,6 +486,7 @@ export function App() {
             onBack={handleBack}
             onDelete={handleDeleteActivePad}
             onContentChange={handleContentChange}
+            onContentFormatChange={handleContentFormatChange}
             onTitleChange={handleTitleChange}
           />
         ) : (

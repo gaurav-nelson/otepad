@@ -433,7 +433,7 @@ export function SurfaceView({
                     maxLines={4}
                     wordBreak="break-word"
                   >
-                    {previewText(pad.content)}
+                    {previewText(pad.content, pad.contentFormat ?? "html")}
                   </Text>
                   <Timestamp
                     className="otepad-pad-updated"

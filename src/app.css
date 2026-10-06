@@ -292,6 +292,23 @@ body {
 
 .otepad-editor-body {
   flex: 1 0 auto;
+  min-height: 60vh;
+  max-width: 100%;
+  color: var(--color-text-primary);
+  font-family: var(--font-family-code);
+  font-size: 1.05rem;
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: -0.01em;
+  outline: none;
+  white-space: pre-wrap;
+  word-break: break-word;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.otepad-editor-content .ProseMirror {
+  flex: 1 0 auto;
   font-family: var(--font-family-code);
   font-size: 1.05rem;
   font-weight: 400;
@@ -301,11 +318,167 @@ body {
   outline: none;
   white-space: pre-wrap;
   word-break: break-word;
+  -webkit-user-select: text;
   user-select: text;
+}
+
+.otepad-editor-content .ProseMirror p,
+.otepad-editor-content .ProseMirror li,
+.otepad-editor-content .ProseMirror blockquote,
+.otepad-editor-content .ProseMirror th,
+.otepad-editor-content .ProseMirror td {
+  font-family: var(--font-family-code);
+  font-size: 1.05rem;
+  line-height: 1.65;
 }
 
 .otepad-editor-body:focus {
   outline: none;
+}
+
+.otepad-editor-body > :first-child {
+  margin-top: 0;
+}
+
+.otepad-editor-body > :last-child {
+  margin-bottom: 0;
+}
+
+.otepad-editor-body h1,
+.otepad-editor-body h2,
+.otepad-editor-body h3,
+.otepad-editor-body h4,
+.otepad-editor-body h5,
+.otepad-editor-body h6 {
+  margin-block: var(--spacing-5) var(--spacing-2);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-heading);
+  line-height: 1.3;
+}
+
+.otepad-editor-body h1 { font-size: var(--text-heading-1-size); }
+.otepad-editor-body h2 { font-size: var(--text-heading-2-size); }
+.otepad-editor-body h3 { font-size: var(--text-heading-3-size); }
+.otepad-editor-body h4 { font-size: var(--text-heading-4-size); }
+.otepad-editor-body h5 { font-size: var(--text-heading-5-size); }
+.otepad-editor-body h6 { font-size: var(--text-heading-6-size); }
+
+.otepad-editor-body p,
+.otepad-editor-body ul,
+.otepad-editor-body ol,
+.otepad-editor-body blockquote,
+.otepad-editor-body table,
+.otepad-editor-body pre {
+  margin-block: 0 var(--spacing-4);
+}
+
+.otepad-editor-body ul,
+.otepad-editor-body ol {
+  padding-inline-start: var(--spacing-6);
+  list-style-position: outside;
+}
+
+.otepad-editor-body ul:not([data-type="taskList"]) {
+  list-style-type: disc;
+}
+
+.otepad-editor-body ol {
+  list-style-type: decimal;
+}
+
+.otepad-editor-body ul[data-type="taskList"] {
+  padding-inline-start: 0;
+  list-style: none;
+}
+
+.otepad-editor-body li[data-type="taskItem"] {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+}
+
+.otepad-editor-body li[data-type="taskItem"] > label {
+  display: flex;
+  flex-shrink: 0;
+  margin-block-start: var(--spacing-1);
+}
+
+.otepad-editor-body blockquote {
+  padding-inline-start: var(--spacing-4);
+  border-inline-start: var(--border-width) solid var(--color-border);
+  color: var(--color-text-secondary);
+}
+
+.otepad-editor-body a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.otepad-editor-body code,
+.otepad-editor-body pre {
+  font-family: var(--font-family-code);
+}
+
+.otepad-editor-body code {
+  padding: 0 var(--spacing-1);
+  border-radius: var(--radius-inner);
+  background: var(--color-background-muted);
+  font-size: 1.05em;
+}
+
+.otepad-editor-body pre {
+  max-width: 100%;
+  padding: var(--spacing-3);
+  overflow: auto;
+  border-radius: var(--radius-element);
+  background: var(--color-background-muted);
+  white-space: pre;
+}
+
+.otepad-editor-body pre code {
+  padding: 0;
+  background: transparent;
+}
+
+.otepad-editor-body hr {
+  margin-block: var(--spacing-5);
+  border: 0;
+  border-top: var(--border-width) solid var(--color-border);
+}
+
+.otepad-editor-body table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+}
+
+.otepad-editor-body th,
+.otepad-editor-body td {
+  padding: var(--spacing-2) var(--spacing-3);
+  border: var(--border-width) solid var(--color-border);
+  text-align: start;
+}
+
+.otepad-editor-body th {
+  background: var(--color-background-muted);
+  font-weight: var(--font-weight-semibold);
+}
+
+.otepad-editor-content {
+  flex: 1 0 auto;
+  width: 100%;
+  min-height: 60vh;
+}
+
+.otepad-format-hint {
+  padding-inline: var(--spacing-1);
+  margin-block-end: var(--spacing-3);
+}
+
+.otepad-editor-body.ProseMirror {
+  cursor: text;
 }
 
 .otepad-title-button,
@@ -397,4 +570,7 @@ button {
   .otepad-editor {
     padding: var(--spacing-5) var(--spacing-10) var(--spacing-12);
   }
+
+  .otepad-editor-content,
+  .otepad-editor-body { min-height: 40vh; }
 }

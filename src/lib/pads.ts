@@ -3,6 +3,7 @@ import {
   isAppThemeId,
   type AppThemeId,
 } from "../theme/catalog";
+import { markdownToPlainText } from "./markdown";
 
 export const STORAGE_KEY = "otepad.pads";
 export const LEGACY_CONTENT_KEY = "content";
@@ -17,6 +18,7 @@ export type Pad = {
   id: string;
   title: string;
   content: string;
+  contentFormat?: "html" | "markdown";
   updatedAt: number;
 };
 
@@ -50,11 +52,16 @@ export function generateId(): string {
   return `pad-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
-export function createPad(title: string, content = ""): Pad {
+export function createPad(
+  title: string,
+  content = "",
+  contentFormat: "html" | "markdown" = "markdown",
+): Pad {
   return {
     id: generateId(),
     title,
     content,
+    contentFormat,
     updatedAt: Date.now(),
   };
 }
@@ -88,12 +95,19 @@ export function isTitleTaken(
   );
 }
 
-export function previewText(html: string): string {
-  const tmp = document.createElement("div");
-  tmp.innerHTML = html || "";
-  const text = (tmp.textContent || tmp.innerText || "")
-    .replace(/\s+/g, " ")
-    .trim();
+export function plainTextFromContent(
+  content: string,
+  contentFormat: "html" | "markdown" = "html",
+): string {
+  if (contentFormat === "markdown") return markdownToPlainText(content || "");
+  return plainTextFromHtml(content);
+}
+
+export function previewText(
+  content: string,
+  contentFormat: "html" | "markdown" = "html",
+): string {
+  const text = plainTextFromContent(content, contentFormat);
   if (!text) return "Empty";
   return text.length > 140 ? `${text.slice(0, 140)}…` : text;
 }
@@ -108,7 +122,9 @@ export function padMatchesQuery(pad: Pad, query: string): boolean {
   const needle = query.trim().toLowerCase();
   if (!needle) return true;
   if (String(pad.title).toLowerCase().includes(needle)) return true;
-  return plainTextFromHtml(pad.content).toLowerCase().includes(needle);
+  return plainTextFromContent(pad.content, pad.contentFormat ?? "html")
+    .toLowerCase()
+    .includes(needle);
 }
 
 export function filterPads(pads: Pad[], query: string): Pad[] {
@@ -148,7 +164,7 @@ export function loadStore(canStore: boolean): PadStore {
   const legacy = localStorage.getItem(LEGACY_CONTENT_KEY);
   const migrated: PadStore = {
     version: 1,
-    pads: [createPad("sample", legacy || "")],
+    pads: [createPad("sample", legacy || "", "html")],
   };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
   if (legacy !== null) {
@@ -220,17 +236,26 @@ export function setHashSurface(): void {
   }
 }
 
+export type Debounced<T extends (...args: never[]) => void> = (
+  (...args: Parameters<T>) => void
+) & { cancel: () => void };
+
 export function debounce<T extends (...args: never[]) => void>(
   func: T,
   wait: number,
-): (...args: Parameters<T>) => void {
+): Debounced<T> {
   let timeout: ReturnType<typeof setTimeout> | undefined;
-  return (...args: Parameters<T>) => {
+  const debounced = (...args: Parameters<T>) => {
     clearTimeout(timeout);
     timeout = setTimeout(() => {
       func(...args);
     }, wait);
   };
+  debounced.cancel = () => {
+    clearTimeout(timeout);
+    timeout = undefined;
+  };
+  return debounced;
 }
 
 export function setEndOfContenteditable(el: HTMLElement): void {

@@ -1,19 +1,24 @@
 import { HStack } from "@astryxdesign/core/HStack";
 import { IconButton } from "@astryxdesign/core/IconButton";
+import { Text } from "@astryxdesign/core/Text";
 import { VStack } from "@astryxdesign/core/VStack";
+import { TaskItem, TaskList } from "@tiptap/extension-list";
+import { Markdown } from "@tiptap/markdown";
+import { TableKit } from "@tiptap/extension-table";
+import StarterKit from "@tiptap/starter-kit";
+import { EditorContent, Extension, useEditor } from "@tiptap/react";
 import { ArrowLeft, Trash2 } from "lucide-react";
 import {
   useEffect,
   useRef,
   useState,
-  type ClipboardEvent,
+  type ClipboardEvent as ReactClipboardEvent,
   type KeyboardEvent,
 } from "react";
 import { ThemePicker } from "./ThemePicker";
 import { ThemeToggle } from "./ThemeToggle";
 import {
   TITLE_MAX_LENGTH,
-  setEndOfContenteditable,
   type AppThemeId,
   type Pad,
   type ThemeMode,
@@ -28,9 +33,33 @@ type EditorViewProps = {
   onThemeIdChange: (id: AppThemeId) => void;
   onBack: () => void;
   onDelete: () => void;
-  onContentChange: (html: string) => void;
+  onContentChange: (content: string) => void;
+  // Used to migrate older HTML pads into the Markdown-only editor format.
+  onContentFormatChange: (
+    contentFormat: "html" | "markdown",
+    content: string,
+  ) => void;
   onTitleChange: (title: string) => boolean;
 };
+
+const MarkdownImageAltText = Extension.create({
+  name: "markdownImageAltText",
+  markdownTokenName: "image",
+  parseMarkdown: (token) => ({ type: "text", text: token.text || "" }),
+});
+
+function looksLikeMarkdown(text: string): boolean {
+  return (
+    /^ {0,3}(?:#{1,6}\s|[-*+]\s+|\d{1,9}[.)]\s+|>\s?|```|~~~|(?:[-*_]\s*){3,}$)/m.test(
+      text,
+    ) ||
+    /^\s*\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?\s*$/m.test(text) ||
+    /\*\*[^*\n]+\*\*|__[^_\n]+__|~~[^~\n]+~~|`[^`\n]+`|!?\[[^\]]+\]\([^\s)]+\)/.test(
+      text,
+    ) ||
+    /(?:^|[^\w])(?:\*[^*\n]+\*|_[^_\n]+_)(?:$|[^\w])/.test(text)
+  );
+}
 
 export function EditorView({
   pad,
@@ -42,32 +71,62 @@ export function EditorView({
   onBack,
   onDelete,
   onContentChange,
+  onContentFormatChange,
   onTitleChange,
 }: EditorViewProps) {
-  const editorRef = useRef<HTMLDivElement>(null);
   const titleInputRef = useRef<HTMLInputElement>(null);
+  const initialContentFormat = pad.contentFormat ?? "html";
+  const currentFormatRef = useRef(initialContentFormat);
+  const onContentChangeRef = useRef(onContentChange);
+  const onContentFormatChangeRef = useRef(onContentFormatChange);
+  currentFormatRef.current = initialContentFormat;
+  onContentChangeRef.current = onContentChange;
+  onContentFormatChangeRef.current = onContentFormatChange;
+
+  const editor = useEditor(
+    {
+      extensions: [
+        StarterKit,
+        TaskList,
+        TaskItem,
+        TableKit,
+        MarkdownImageAltText,
+        Markdown.configure({ markedOptions: { breaks: true, gfm: true } }),
+      ],
+      content: pad.content || "",
+      contentType: initialContentFormat === "markdown" ? "markdown" : "html",
+      autofocus: "end",
+      editorProps: {
+        attributes: {
+          class: "otepad-editor-body",
+          role: "textbox",
+          "aria-multiline": "true",
+          "aria-label": "Editor",
+          spellcheck: "true",
+        },
+      },
+      onCreate: ({ editor: createdEditor }) => {
+        if (currentFormatRef.current === "markdown") return;
+        const markdown = createdEditor.isEmpty ? "" : createdEditor.getMarkdown();
+        currentFormatRef.current = "markdown";
+        onContentFormatChangeRef.current("markdown", markdown);
+      },
+      onUpdate: ({ editor: updatedEditor }) => {
+        onContentChangeRef.current(
+          updatedEditor.isEmpty ? "" : updatedEditor.getMarkdown(),
+        );
+      },
+    },
+    [pad.id],
+  );
+
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [titleDraft, setTitleDraft] = useState(pad.title);
   const titleBeforeEdit = useRef(pad.title);
-  const seededPadId = useRef<string | null>(null);
 
   useEffect(() => {
-    if (!isEditingTitle) {
-      setTitleDraft(pad.title);
-    }
+    if (!isEditingTitle) setTitleDraft(pad.title);
   }, [pad.title, isEditingTitle]);
-
-  useEffect(() => {
-    const el = editorRef.current;
-    if (!el) return;
-    if (seededPadId.current === pad.id) return;
-    seededPadId.current = pad.id;
-    setIsEditingTitle(false);
-    setTitleDraft(pad.title);
-    el.innerHTML = pad.content || "";
-    setEndOfContenteditable(el);
-    el.focus();
-  }, [pad.id, pad.title, pad.content]);
 
   useEffect(() => {
     if (!isEditingTitle) return;
@@ -86,9 +145,7 @@ export function EditorView({
   function commitTitleEdit() {
     if (!isEditingTitle) return;
     const ok = onTitleChange(titleDraft);
-    if (!ok) {
-      setTitleDraft(pad.title);
-    }
+    if (!ok) setTitleDraft(pad.title);
     setIsEditingTitle(false);
   }
 
@@ -97,29 +154,48 @@ export function EditorView({
     setIsEditingTitle(false);
   }
 
+  function focusContentEditor() {
+    editor?.commands.focus();
+  }
+
   function onTitleKeyDown(e: KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter") {
       e.preventDefault();
       commitTitleEdit();
-      editorRef.current?.focus();
+      focusContentEditor();
     } else if (e.key === "Escape") {
       e.preventDefault();
       cancelTitleEdit();
-      editorRef.current?.focus();
+      focusContentEditor();
     }
   }
 
-  function onPaste(e: ClipboardEvent<HTMLDivElement>) {
-    // Browsers expose modifier keys on paste; DOM typings omit them.
-    if (!(e.nativeEvent as unknown as { shiftKey?: boolean }).shiftKey) return;
-    e.preventDefault();
+  function onPaste(e: ReactClipboardEvent<HTMLDivElement>) {
+    if (!editor) return;
     const text = e.clipboardData.getData("text/plain");
-    const selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0 || !editorRef.current) return;
-    selection.deleteFromDocument();
-    selection.getRangeAt(0).insertNode(document.createTextNode(text));
-    setEndOfContenteditable(editorRef.current);
-    onContentChange(editorRef.current.innerHTML);
+    const shiftPaste = (e.nativeEvent as unknown as { shiftKey?: boolean })
+      .shiftKey;
+
+    if (shiftPaste) {
+      e.preventDefault();
+      editor.commands.insertContent(text, {
+        parseOptions: { preserveWhitespace: "full" },
+      });
+      return;
+    }
+
+    if (!text || !looksLikeMarkdown(text) || !editor.markdown) return;
+    e.preventDefault();
+    editor.commands.insertContent(editor.markdown.parse(text));
+  }
+
+  function saveOnBlur() {
+    if (isEditingTitle) commitTitleEdit();
+    if (!editor) return;
+    const content = editor.isEmpty
+      ? ""
+      : editor.getMarkdown();
+    onContentChange(content);
   }
 
   return (
@@ -194,26 +270,11 @@ export function EditorView({
           </button>
         )}
 
-        <div
-          ref={editorRef}
-          className="otepad-editor-body"
-          contentEditable
-          role="textbox"
-          aria-multiline="true"
-          aria-label="Editor"
-          suppressContentEditableWarning
-          onInput={() => {
-            if (editorRef.current) {
-              onContentChange(editorRef.current.innerHTML);
-            }
-          }}
-          onBlur={() => {
-            if (isEditingTitle) commitTitleEdit();
-            if (editorRef.current) {
-              onContentChange(editorRef.current.innerHTML);
-            }
-          }}
+        <EditorContent
+          editor={editor}
+          className="otepad-editor-content no-drag"
           onPaste={onPaste}
+          onBlur={saveOnBlur}
         />
       </VStack>
     </VStack>
