@@ -1,6 +1,5 @@
 import { HStack } from "@astryxdesign/core/HStack";
 import { IconButton } from "@astryxdesign/core/IconButton";
-import { Text } from "@astryxdesign/core/Text";
 import { VStack } from "@astryxdesign/core/VStack";
 import { TaskItem, TaskList } from "@tiptap/extension-list";
 import { Markdown } from "@tiptap/markdown";
