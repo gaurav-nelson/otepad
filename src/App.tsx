@@ -20,6 +20,7 @@ import {
   loadStore,
   nextUntitledTitle,
   normalizeTitle,
+  normalizePadColor,
   padIdFromHash,
   persistStore,
   persistTheme,
@@ -191,6 +192,17 @@ export function App() {
 
   function handleAddPad() {
     updatePads((pads) => [...pads, createPad(nextUntitledTitle(pads), "")]);
+  }
+
+  function handlePadColorChange(id: string, color: string | undefined) {
+    const normalizedColor = normalizePadColor(color);
+    updatePads((pads) =>
+      pads.map((pad) =>
+        pad.id === id
+          ? { ...pad, color: normalizedColor }
+          : pad,
+      ),
+    );
   }
 
   function handleOpenPad(id: string) {
@@ -420,6 +432,7 @@ export function App() {
             title,
             content: imported.content,
             contentFormat: imported.contentFormat,
+            color: normalizePadColor(imported.color),
             updatedAt: imported.updatedAt || Date.now(),
           };
         });
@@ -502,6 +515,7 @@ export function App() {
             onOpenPad={handleOpenPad}
             onToggleSelect={handleToggleSelect}
             onAddPad={handleAddPad}
+            onPadColorChange={handlePadColorChange}
             onDeletePads={handleDeleteSurfacePads}
             onExportPads={handleExportSurfacePads}
             onImportFiles={handleImportSurfaceFiles}

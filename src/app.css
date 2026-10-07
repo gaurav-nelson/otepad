@@ -229,6 +229,14 @@ body {
   width: 100%;
 }
 
+.otepad-pad-card[data-color-type="custom"] {
+  background-color: color-mix(
+    in srgb,
+    var(--color-background-card) 74%,
+    var(--otepad-pad-color)
+  ) !important;
+}
+
 .otepad-pad-card-body {
   height: 100%;
   min-height: inherit;
@@ -240,7 +248,7 @@ body {
   font-weight: 500;
   letter-spacing: -0.025em;
   line-height: 1.2;
-  padding-right: var(--spacing-7);
+  padding-inline-end: var(--spacing-12);
 }
 
 .otepad-pad-preview {
@@ -258,7 +266,11 @@ body {
 }
 
 .otepad-pad-select {
-  position: absolute;
+  z-index: 2;
+}
+
+.otepad-pad-card-controls {
+  position: absolute !important;
   top: var(--spacing-2);
   right: var(--spacing-2);
   z-index: 2;
@@ -267,17 +279,75 @@ body {
   transition: opacity var(--duration-fast) var(--easing-standard, ease);
 }
 
-.otepad-pad-card:hover .otepad-pad-select,
-.otepad-pad-card:focus-within .otepad-pad-select,
-.otepad-pad-grid.is-selecting .otepad-pad-select,
-.otepad-pad-card.is-selected .otepad-pad-select {
+.otepad-card-color-trigger {
+  position: static !important;
+}
+
+.otepad-card-color-trigger[data-colored="true"] {
+  background-color: color-mix(
+    in srgb,
+    var(--color-background-card) 68%,
+    var(--otepad-swatch-color)
+  );
+}
+
+.otepad-color-swatch {
+  width: var(--spacing-8) !important;
+  min-width: var(--spacing-8) !important;
+  height: var(--spacing-8) !important;
+  min-height: var(--spacing-8) !important;
+  padding: 0 !important;
+  border: var(--border-width) solid var(--color-border-emphasized) !important;
+  border-radius: var(--radius-round) !important;
+  background-color: var(--otepad-swatch-color) !important;
+  color: var(--color-text-primary) !important;
+}
+
+.otepad-color-swatch[aria-pressed="true"] {
+  outline: var(--border-width) solid var(--color-accent);
+  outline-offset: var(--spacing-1);
+}
+
+.otepad-custom-color-row {
+  min-height: var(--spacing-8);
+}
+
+.otepad-custom-color-input {
+  width: var(--spacing-8);
+  height: var(--spacing-8);
+  padding: 0;
+  overflow: hidden;
+  border: var(--border-width) solid var(--color-border-emphasized);
+  border-radius: var(--radius-round);
+  background-color: var(--otepad-swatch-color);
+  cursor: pointer;
+}
+
+.otepad-custom-color-input::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.otepad-custom-color-input::-webkit-color-swatch {
+  border: 0;
+  border-radius: var(--radius-round);
+}
+
+.otepad-color-reset {
+  margin-inline-start: auto;
+}
+
+.otepad-pad-card:hover .otepad-pad-card-controls,
+.otepad-pad-card:focus-within .otepad-pad-card-controls,
+.otepad-pad-grid.is-selecting .otepad-pad-card-controls,
+.otepad-pad-card.is-selected .otepad-pad-card-controls,
+.otepad-pad-card-controls:has(.otepad-card-color-trigger.is-open) {
   opacity: 1;
   pointer-events: auto;
 }
 
 @media (hover: none) {
-  .otepad-pad-select {
-    opacity: 0.7;
+  .otepad-pad-card-controls {
+    opacity: 1;
     pointer-events: auto;
   }
 }

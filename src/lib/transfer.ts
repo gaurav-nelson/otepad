@@ -1,5 +1,10 @@
 import { inflateSync, strFromU8, strToU8, zipSync } from "fflate";
-import { TITLE_MAX_LENGTH, normalizeTitle, type Pad } from "./pads";
+import {
+  TITLE_MAX_LENGTH,
+  normalizePadColor,
+  normalizeTitle,
+  type Pad,
+} from "./pads";
 
 export const OTP_EXTENSION = ".otp";
 
@@ -19,6 +24,7 @@ export type ImportedNote = {
   title: string;
   content: string;
   contentFormat: "html" | "markdown";
+  color?: string;
   updatedAt: number;
 };
 
@@ -129,6 +135,7 @@ export function buildOtpBlob(pads: Pad[]): Blob {
       file: name.slice("notes/".length),
       title: String(pad.title || "").slice(0, TITLE_MAX_LENGTH),
       contentFormat: pad.contentFormat === "markdown" ? "markdown" : "html",
+      color: normalizePadColor(pad.color),
       updatedAt: Number.isFinite(pad.updatedAt) ? Math.floor(pad.updatedAt) : Date.now(),
     };
   });
@@ -346,12 +353,13 @@ function noteTitleFor(
   fileName: string,
   manifestTitles: Map<
     string,
-    { title: unknown; updatedAt: unknown; contentFormat: unknown }
+    { title: unknown; updatedAt: unknown; contentFormat: unknown; color: unknown }
   >,
 ): {
   title: string;
   updatedAt?: number;
   contentFormat: "html" | "markdown";
+  color?: string;
 } {
   const meta = manifestTitles.get(fileName.toLowerCase());
   const title =
@@ -369,6 +377,7 @@ function noteTitleFor(
     title: title || titleFromFileBase(fileName),
     updatedAt,
     contentFormat: meta?.contentFormat === "markdown" ? "markdown" : "html",
+    color: normalizePadColor(meta?.color),
   };
 }
 
@@ -398,7 +407,7 @@ function notesFromOtpBytes(
   const manifestEntry = entries.find((e) => e.name === "manifest.json");
   const manifestTitles = new Map<
     string,
-    { title: unknown; updatedAt: unknown; contentFormat: unknown }
+    { title: unknown; updatedAt: unknown; contentFormat: unknown; color: unknown }
   >();
   if (manifestEntry) {
     const raw = extractEntry(bytes, manifestEntry);
@@ -427,11 +436,13 @@ function notesFromOtpBytes(
                 title?: unknown;
                 updatedAt?: unknown;
                 contentFormat?: unknown;
+                color?: unknown;
               };
               manifestTitles.set(String(rec.file).toLowerCase(), {
                 title: rec.title,
                 updatedAt: rec.updatedAt,
                 contentFormat: rec.contentFormat,
+                color: rec.color,
               });
             }
           }
@@ -469,11 +480,12 @@ function notesFromOtpBytes(
       continue;
     }
     const text = strFromU8(raw);
-    const { title, updatedAt, contentFormat } = noteTitleFor(base, manifestTitles);
+    const { title, updatedAt, contentFormat, color } = noteTitleFor(base, manifestTitles);
     notes.push({
       title,
       content: contentFormat === "markdown" ? text : textToEditorHtml(text),
       contentFormat,
+      color,
       updatedAt: updatedAt ?? Date.now(),
     });
   }

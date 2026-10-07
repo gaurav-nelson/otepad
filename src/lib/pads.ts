@@ -14,11 +14,27 @@ export const TITLE_MAX_LENGTH = 60;
 export type ThemeMode = "light" | "dark";
 export type { AppThemeId };
 
+export const PAD_COLOR_PRESETS = [
+  "blue",
+  "cyan",
+  "gray",
+  "green",
+  "orange",
+  "pink",
+  "purple",
+  "red",
+  "teal",
+  "yellow",
+] as const;
+
+export type PadColorPreset = (typeof PAD_COLOR_PRESETS)[number];
+
 export type Pad = {
   id: string;
   title: string;
   content: string;
   contentFormat?: "html" | "markdown";
+  color?: string;
   updatedAt: number;
 };
 
@@ -64,6 +80,20 @@ export function createPad(
     contentFormat,
     updatedAt: Date.now(),
   };
+}
+
+export function normalizePadColor(value: unknown): string | undefined {
+  if (typeof value !== "string") return undefined;
+  if (isPadColorPreset(value)) return value;
+  if (/^#[\da-f]{6}$/i.test(value)) return value.toLowerCase();
+  return undefined;
+}
+
+export function isPadColorPreset(value: unknown): value is PadColorPreset {
+  return (
+    typeof value === "string" &&
+    (PAD_COLOR_PRESETS as readonly string[]).includes(value)
+  );
 }
 
 export function nextUntitledTitle(pads: Pad[]): string {
@@ -147,6 +177,10 @@ export function loadStore(canStore: boolean): PadStore {
     try {
       const parsed = JSON.parse(raw) as { pads?: Pad[] };
       if (parsed && Array.isArray(parsed.pads)) {
+        parsed.pads = parsed.pads.map((pad) => ({
+          ...pad,
+          color: normalizePadColor(pad?.color),
+        }));
         if (parsed.pads.length === 0) {
           parsed.pads.push(createPad("sample", ""));
           localStorage.setItem(

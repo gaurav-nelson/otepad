@@ -20,13 +20,16 @@ import {
   useRef,
   useState,
   useSyncExternalStore,
+  type CSSProperties,
   type DragEvent,
 } from "react";
 import { ThemePicker } from "./ThemePicker";
 import { ThemeToggle } from "./ThemeToggle";
+import { PadColorPicker } from "./PadColorPicker";
 import type { TransferNotice } from "../App";
 import {
   filterPads,
+  isPadColorPreset,
   previewText,
   type AppThemeId,
   type Pad,
@@ -72,6 +75,7 @@ type SurfaceViewProps = {
   onOpenPad: (id: string) => void;
   onToggleSelect: (id: string, selected: boolean) => void;
   onAddPad: () => void;
+  onPadColorChange: (id: string, color: string | undefined) => void;
   onDeletePads: () => void;
   onExportPads: () => void;
   onImportFiles: (files: FileList | File[]) => void;
@@ -90,6 +94,7 @@ export function SurfaceView({
   onOpenPad,
   onToggleSelect,
   onAddPad,
+  onPadColorChange,
   onDeletePads,
   onExportPads,
   onImportFiles,
@@ -399,6 +404,21 @@ export function SurfaceView({
               <ClickableCard
                 key={pad.id}
                 className={`otepad-pad-card${isSelected ? " is-selected" : ""}`}
+                data-color-type={
+                  pad.color
+                    ? isPadColorPreset(pad.color)
+                      ? "preset"
+                      : "custom"
+                    : "none"
+                }
+                variant={
+                  isPadColorPreset(pad.color) ? pad.color : "default"
+                }
+                style={
+                  pad.color && !isPadColorPreset(pad.color)
+                    ? ({ "--otepad-pad-color": pad.color } as CSSProperties)
+                    : undefined
+                }
                 label={`Open ${pad.title}`}
                 padding={4}
                 elevation="low"
@@ -410,13 +430,26 @@ export function SurfaceView({
                   onOpenPad(pad.id);
                 }}
               >
-                <CheckboxInput
-                  className="otepad-pad-select"
-                  label={`Select ${pad.title}`}
-                  isLabelHidden
-                  value={isSelected}
-                  onChange={(checked) => onToggleSelect(pad.id, checked)}
-                />
+                <HStack
+                  className="otepad-pad-card-controls"
+                  gap={1}
+                  vAlign="center"
+                  wrap="nowrap"
+                >
+                  <PadColorPicker
+                    padTitle={pad.title}
+                    color={pad.color}
+                    onChange={(color) => onPadColorChange(pad.id, color)}
+                  />
+                  <CheckboxInput
+                    className="otepad-pad-select"
+                    label={`Select ${pad.title}`}
+                    isLabelHidden
+                    size="sm"
+                    value={isSelected}
+                    onChange={(checked) => onToggleSelect(pad.id, checked)}
+                  />
+                </HStack>
                 <VStack gap={3} align="stretch" className="otepad-pad-card-body">
                   <Heading
                     level={2}
