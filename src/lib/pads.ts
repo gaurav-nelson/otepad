@@ -34,6 +34,7 @@ export type Pad = {
   title: string;
   content: string;
   contentFormat?: "html" | "markdown";
+  viewMode?: "source" | "rendered";
   color?: string;
   updatedAt: number;
 };

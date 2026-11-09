@@ -194,6 +194,16 @@ export function App() {
     updatePads((pads) => [...pads, createPad(nextUntitledTitle(pads), "")]);
   }
 
+  function handleViewModeChange(viewMode: "source" | "rendered") {
+    if (!activePad) return;
+    if ((activePad.viewMode ?? "rendered") === viewMode) return;
+    updatePads((pads) =>
+      pads.map((pad) =>
+        pad.id === activePad.id ? { ...pad, viewMode } : pad,
+      ),
+    );
+  }
+
   function handlePadColorChange(id: string, color: string | undefined) {
     const normalizedColor = normalizePadColor(color);
     updatePads((pads) =>
@@ -500,6 +510,7 @@ export function App() {
             onDelete={handleDeleteActivePad}
             onContentChange={handleContentChange}
             onContentFormatChange={handleContentFormatChange}
+            onViewModeChange={handleViewModeChange}
             onTitleChange={handleTitleChange}
           />
         ) : (

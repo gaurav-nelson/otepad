@@ -392,6 +392,31 @@ body {
   user-select: text;
 }
 
+.otepad-editor-source {
+  box-sizing: border-box;
+  flex: 1 0 auto;
+  width: 100%;
+  min-height: 60vh;
+  resize: none;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--color-text-primary);
+  font-family: var(--font-family-code);
+  font-size: 1.05rem;
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: -0.01em;
+  white-space: pre-wrap;
+  word-break: break-word;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.otepad-editor-source:focus {
+  outline: none;
+}
+
 .otepad-editor-content .ProseMirror p,
 .otepad-editor-content .ProseMirror li,
 .otepad-editor-content .ProseMirror blockquote,
@@ -639,6 +664,11 @@ button {
 @media (max-width: 640px) {
   .otepad-editor {
     padding: var(--spacing-5) var(--spacing-10) var(--spacing-12);
+  }
+
+  /* Icon-only view toggle on mobile; labels stay as accessible names. */
+  .otepad-view-toggle .astryx-segmented-control-item span {
+    display: none;
   }
 
   .otepad-editor-content,
