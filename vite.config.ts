@@ -3,6 +3,32 @@ import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes("node_modules")) return undefined;
+          if (id.includes("/@tiptap/")) {
+            return "editor";
+          }
+          if (id.includes("/prosemirror-") || id.includes("/@lezer/")) {
+            return "prosemirror";
+          }
+          if (
+            id.includes("/react/") ||
+            id.includes("/react-dom/") ||
+            id.includes("/scheduler/")
+          ) {
+            return "react";
+          }
+          if (id.includes("/@astryxdesign/") || id.includes("/@stylexjs/")) {
+            return "astryx";
+          }
+          return undefined;
+        },
+      },
+    },
+  },
   plugins: [
     react(),
     VitePWA({
