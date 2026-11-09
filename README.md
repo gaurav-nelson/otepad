@@ -2,6 +2,8 @@
 
 A minimal free temporary note-taking app. Not your regular text editor.
 
+[Otepad Demo](https://github.com/user-attachments/assets/da815b0a-b473-4f73-87d3-546f0d57a7cf)
+
 ## What people use it for
 
 - **Scratch space that outlives a tab.** Paste a link, a code snippet, or a phone number you'll only need for a few days — it's still there when you come back, and gone for good when you delete it.
