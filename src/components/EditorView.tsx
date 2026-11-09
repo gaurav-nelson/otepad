@@ -1,12 +1,16 @@
 import { HStack } from "@astryxdesign/core/HStack";
 import { IconButton } from "@astryxdesign/core/IconButton";
+import {
+  SegmentedControl,
+  SegmentedControlItem,
+} from "@astryxdesign/core/SegmentedControl";
 import { VStack } from "@astryxdesign/core/VStack";
 import { TaskItem, TaskList } from "@tiptap/extension-list";
 import { Markdown } from "@tiptap/markdown";
 import { TableKit } from "@tiptap/extension-table";
 import StarterKit from "@tiptap/starter-kit";
 import { EditorContent, Extension, useEditor } from "@tiptap/react";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { ArrowLeft, Code2, Eye, Trash2 } from "lucide-react";
 import {
   useEffect,
   useRef,
@@ -38,6 +42,7 @@ type EditorViewProps = {
     contentFormat: "html" | "markdown",
     content: string,
   ) => void;
+  onViewModeChange: (viewMode: "source" | "rendered") => void;
   onTitleChange: (title: string) => boolean;
 };
 
@@ -71,6 +76,7 @@ export function EditorView({
   onDelete,
   onContentChange,
   onContentFormatChange,
+  onViewModeChange,
   onTitleChange,
 }: EditorViewProps) {
   const titleInputRef = useRef<HTMLInputElement>(null);
@@ -122,6 +128,37 @@ export function EditorView({
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [titleDraft, setTitleDraft] = useState(pad.title);
   const titleBeforeEdit = useRef(pad.title);
+
+  const viewMode = pad.viewMode ?? "rendered";
+  const [sourceDraft, setSourceDraft] = useState(pad.content || "");
+  const sourceDraftRef = useRef(sourceDraft);
+  sourceDraftRef.current = sourceDraft;
+
+  function currentSourceText(): string {
+    // Prefer the live editor content: the debounced pad save may not have
+    // flushed yet when the user toggles right after typing.
+    if (editor && currentFormatRef.current === "markdown") {
+      return editor.isEmpty ? "" : editor.getMarkdown();
+    }
+    return pad.content || "";
+  }
+
+  function handleViewModeChange(next: "source" | "rendered") {
+    if (next === viewMode) return;
+    if (next === "source") {
+      setSourceDraft(currentSourceText());
+    } else if (editor && sourceDraftRef.current !== currentSourceText()) {
+      editor.commands.setContent(sourceDraftRef.current, {
+        contentType: currentFormatRef.current === "html" ? "html" : "markdown",
+      });
+    }
+    onViewModeChange(next);
+  }
+
+  function handleSourceChange(value: string) {
+    setSourceDraft(value);
+    onContentChange(value);
+  }
 
   useEffect(() => {
     if (!isEditingTitle) setTitleDraft(pad.title);
@@ -218,6 +255,26 @@ export function EditorView({
           }}
         />
         <HStack className="otepad-header-actions" gap={1} vAlign="center">
+          <SegmentedControl
+            className="otepad-view-toggle"
+            size="sm"
+            label="Note view mode"
+            value={viewMode}
+            onChange={(value) =>
+              handleViewModeChange(value as "source" | "rendered")
+            }
+          >
+            <SegmentedControlItem
+              value="rendered"
+              label="Rendered"
+              icon={<Eye size={14} />}
+            />
+            <SegmentedControlItem
+              value="source"
+              label="Source"
+              icon={<Code2 size={14} />}
+            />
+          </SegmentedControl>
           <IconButton
             variant="ghost"
             size="lg"
@@ -269,12 +326,22 @@ export function EditorView({
           </button>
         )}
 
-        <EditorContent
-          editor={editor}
-          className="otepad-editor-content no-drag"
-          onPaste={onPaste}
-          onBlur={saveOnBlur}
-        />
+        {viewMode === "source" ? (
+          <textarea
+            className="otepad-editor-source no-drag"
+            aria-label="Note source"
+            value={sourceDraft}
+            spellCheck={false}
+            onChange={(e) => handleSourceChange(e.target.value)}
+          />
+        ) : (
+          <EditorContent
+            editor={editor}
+            className="otepad-editor-content no-drag"
+            onPaste={onPaste}
+            onBlur={saveOnBlur}
+          />
+        )}
       </VStack>
     </VStack>
   );

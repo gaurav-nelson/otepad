@@ -1,9 +1,22 @@
 import { Theme } from "@astryxdesign/core/theme";
 import { VStack } from "@astryxdesign/core/VStack";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Suspense,
+  lazy,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { ConfirmDialog, type ConfirmState } from "./components/ConfirmDialog";
-import { EditorView } from "./components/EditorView";
 import { SurfaceView } from "./components/SurfaceView";
+
+// The tiptap-based editor is the heaviest part of the bundle; load it on
+// demand so opening the app on the pad list stays light.
+const EditorView = lazy(() =>
+  import("./components/EditorView").then((m) => ({ default: m.EditorView })),
+);
 import { getAppTheme } from "./theme/catalog";
 import {
   buildOtpBlob,
@@ -192,6 +205,16 @@ export function App() {
 
   function handleAddPad() {
     updatePads((pads) => [...pads, createPad(nextUntitledTitle(pads), "")]);
+  }
+
+  function handleViewModeChange(viewMode: "source" | "rendered") {
+    if (!activePad) return;
+    if ((activePad.viewMode ?? "rendered") === viewMode) return;
+    updatePads((pads) =>
+      pads.map((pad) =>
+        pad.id === activePad.id ? { ...pad, viewMode } : pad,
+      ),
+    );
   }
 
   function handlePadColorChange(id: string, color: string | undefined) {
@@ -489,19 +512,22 @@ export function App() {
     <Theme theme={appTheme.theme} mode={colorMode}>
       <VStack className="otepad-shell" gap={0} minHeight="100%">
         {activePad ? (
-          <EditorView
-            pad={activePad}
-            theme={colorMode}
-            themeId={themeId}
-            showModeToggle={!appTheme.darkOnly}
-            onToggleTheme={toggleTheme}
-            onThemeIdChange={handleThemeIdChange}
-            onBack={handleBack}
-            onDelete={handleDeleteActivePad}
-            onContentChange={handleContentChange}
-            onContentFormatChange={handleContentFormatChange}
-            onTitleChange={handleTitleChange}
-          />
+          <Suspense fallback={null}>
+            <EditorView
+              pad={activePad}
+              theme={colorMode}
+              themeId={themeId}
+              showModeToggle={!appTheme.darkOnly}
+              onToggleTheme={toggleTheme}
+              onThemeIdChange={handleThemeIdChange}
+              onBack={handleBack}
+              onDelete={handleDeleteActivePad}
+              onContentChange={handleContentChange}
+              onContentFormatChange={handleContentFormatChange}
+              onViewModeChange={handleViewModeChange}
+              onTitleChange={handleTitleChange}
+            />
+          </Suspense>
         ) : (
           <SurfaceView
             pads={sortedPads(store.pads)}
